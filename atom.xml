@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-13T16:16:13+11:00</updated>
+  <updated>2012-02-13T17:38:42+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -500,8 +500,9 @@ stuff like:</p>
 <li>ettercap (to monitor my home network)</li>
 <li>lsyncd (to synchronize files)</li>
 <li>nginx (for reverse proxy and web server)</li>
-<li>django (web apps running with gunicorn)</li>
+<li>django (web apps running with gunicorn and postgres)</li>
 <li>transmission (torrent server)</li>
+<li>vncserver</li>
 </ul>
 
 ]]></content>
