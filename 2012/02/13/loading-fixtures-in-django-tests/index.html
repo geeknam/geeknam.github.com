@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Aliases for Google Storage - geeknam's blog</title>
+  <title>Loading fixtures in Django tests - geeknam's blog</title>
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my &hellip;">
+  <meta name="description" content="When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://geeknam.github.com/2011/06/11/aliases-for-google-storage">
+  <link rel="canonical" href="http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">Aliases for Google Storage</h1>
+      <h1 class="entry-title">Loading Fixtures in Django Tests</h1>
     
     
       <p class="meta">
@@ -96,14 +96,19 @@
   
 
 
-<time datetime="2011-06-11T13:13:00+10:00" pubdate data-updated="true">Jun 11<span>th</span>, 2011</time>
+<time datetime="2012-02-13T14:22:00+11:00" pubdate data-updated="true">Feb 13<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
+<div class="entry-content"><p>When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a GlobalSetup class that other tests should inherit from (it&#8217;s located at the project level). However, this approach creates a problem with loading fixtures. According to Django <a href="https://docs.djangoproject.com/en/dev/topics/testing/">docs</a>: <!-- more --></p>
+
+<blockquote><p>Once you&#8217;ve created a fixture and placed it in a fixtures directory in one of your INSTALLED_APPS, you can use it in your unit tests by specifying a fixtures class attribute on your django.test.TestCase subclass</p></blockquote>
+
+
+<p>And you would normally do this to load the fixtures:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -112,15 +117,62 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">function </span>gsup<span class="o">(){</span>
-</span><span class='line'>    gsutil cp <span class="s2">&quot;$@&quot;</span> gs://bucketname.com
-</span><span class='line'><span class="o">}</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">function </span>gsdown<span class="o">(){</span>
-</span><span class='line'>    gsutil cp gs://bucketname.com/<span class="s2">&quot;$@&quot;</span> ~/Desktop
-</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">PoniesTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ponies&#39;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_ponies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">call_some_test_code</span><span class="p">()</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>How should we load the fixtures now, when the test file is not at the apps level?
+Instead of creating fixures folder and placing fixtures in them (in every app), a better and neater way to handle this would be to put all fixtures in one folder at the project level and load them. You can do this with <code>call_command</code> as following:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">django.core.management</span> <span class="kn">import</span> <span class="n">call_command</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">GlobalSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Create some ponies and snakes here</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="c"># Load fixtures</span>
+</span><span class='line'>        <span class="n">call_command</span><span class="p">(</span><span class="s">&#39;loaddata&#39;</span><span class="p">,</span> <span class="s">&#39;tests/ponies&#39;</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Invoking this <code>call_command</code> is equivalent to running <code>manage.py loaddata /path/to/fixtures</code>
+The test in each app can now inherit GlocalSetup and reuse setUp():</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="kn">from</span> <span class="nn">project.tests</span> <span class="kn">import</span> <span class="n">GlobalSetup</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">PoniesTest</span><span class="p">(</span><span class="n">GlobalSetup</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">PoniesTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_ponies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">call_some_test_code</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You could also limit each test to load different fixtures by passing a list of fixtures name <code>['ponies', 'snakes']</code> to setUp().
+Hope this will help you to DRY up your tests.</p>
 </div>
 
 
@@ -143,12 +195,12 @@
   
 
 
-<time datetime="2011-06-11T13:13:00+10:00" pubdate data-updated="true">Jun 11<span>th</span>, 2011</time>
+<time datetime="2012-02-13T14:22:00+11:00" pubdate data-updated="true">Feb 13<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/categories/alias/'>alias</a>, <a class='category' href='/categories/bash/'>bash</a>, <a class='category' href='/categories/google/'>google</a>
+    <a class='category' href='/categories/django/'>django</a>, <a class='category' href='/categories/dry/'>dry</a>, <a class='category' href='/categories/fixtures/'>fixtures</a>, <a class='category' href='/categories/python/'>python</a>, <a class='category' href='/categories/tdd/'>tdd</a>, <a class='category' href='/categories/testing/'>testing</a>
   
 </span>
 
@@ -157,7 +209,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -170,10 +222,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2011/05/08/using-php-to-parse-git-history/" title="Previous Post: Using PHP to parse git history">&laquo; Using PHP to parse git history</a>
+        <a class="basic-alignment left" href="/2012/02/11/first-post-from-octopress/" title="Previous Post: First post from Octopress">&laquo; First post from Octopress</a>
       
-      
-        <a class="basic-alignment right" href="/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/" title="next Post: Fatal error: Call to undefined function _make_cat_compat()">Fatal error: Call to undefined function _make_cat_compat() &raquo;</a>
       
     </p>
   </footer>
@@ -294,8 +344,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://geeknam.github.com/2011/06/11/aliases-for-google-storage/';
-        var disqus_url = 'http://geeknam.github.com/2011/06/11/aliases-for-google-storage/';
+        var disqus_identifier = 'http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/';
+        var disqus_url = 'http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/';
         var disqus_script = 'embed.js';
       
     (function () {
