@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>about - geeknam's blog</title>
+  <title>Aliases for Google Storage - geeknam's blog</title>
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="About Feb 12th, 2012 Student and developer with an interest in web and mobile applications.
-Open source enthusiast. Love embedded devices and plug &hellip;">
+  <meta name="description" content="I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ Open source enthusiast. Love embedded devices and plug &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://geeknam.github.com/about">
+  <link rel="canonical" href="http://geeknam.github.com/2011/06/11/aliases-for-google-storage">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -65,34 +64,15 @@ Open source enthusiast. Love embedded devices and plug &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">About</h1>
-    <p class="meta">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-12T14:25:00+11:00" pubdate data-updated="true">Feb 12<span>th</span>, 2012</time></p>
-  </header>
-  
-  <p>Student and developer with an interest in web and mobile applications.
-Open source enthusiast. Love embedded devices and plug computers. Appreciate the beauty Python
-and flexibility of Django.</p>
-
-  
-    <footer>
+    
+      <h1 class="entry-title">Aliases for Google Storage</h1>
+    
+    
       <p class="meta">
         
-        
 
 
 
@@ -104,13 +84,94 @@ and flexibility of Django.</p>
   
 
 
-<time datetime="2012-02-12T14:25:00+11:00" pubdate data-updated="true">Feb 12<span>th</span>, 2012</time>
+<time datetime="2011-06-11T13:13:00+10:00" pubdate data-updated="true">Jun 11<span>th</span>, 2011</time>
         
       </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">function </span>gsup<span class="o">(){</span>
+</span><span class='line'>    gsutil cp <span class="s2">&quot;$@&quot;</span> gs://bucketname.com
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>gsdown<span class="o">(){</span>
+</span><span class='line'>    gsutil cp gs://bucketname.com/<span class="s2">&quot;$@&quot;</span> ~/Desktop
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
       
-    </footer>
   
+
+<span class="byline author vcard">Posted by <span class="fn">Ngo Minh Nam</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-11T13:13:00+10:00" pubdate data-updated="true">Jun 11<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/categories/alias/'>alias</a>, <a class='category' href='/categories/bash/'>bash</a>, <a class='category' href='/categories/google/'>google</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2011/05/08/using-php-to-parse-git-history/" title="Previous Post: Using PHP to parse git history">&laquo; Using PHP to parse git history</a>
+      
+      
+        <a class="basic-alignment right" href="/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/" title="next Post: Fatal error: Call to undefined function _make_cat_compat()">Fatal error: Call to undefined function _make_cat_compat() &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -206,6 +267,22 @@ and flexibility of Django.</p>
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'geeknamsblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://geeknam.github.com/2011/06/11/aliases-for-google-storage/';
+        var disqus_url = 'http://geeknam.github.com/2011/06/11/aliases-for-google-storage/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

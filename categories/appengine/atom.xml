@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: appengine | geeknam's blog]]></title>
+  <link href="http://geeknam.github.com/categories/appengine/atom.xml" rel="self"/>
+  <link href="http://geeknam.github.com/"/>
+  <updated>2012-02-13T13:55:15+11:00</updated>
+  <id>http://geeknam.github.com/</id>
+  <author>
+    <name><![CDATA[Ngo Minh Nam]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GAE XMPPHandler]]></title>
+    <link href="http://geeknam.github.com/2010/12/25/gae-xmpphandler/"/>
+    <updated>2010-12-25T15:57:00+11:00</updated>
+    <id>http://geeknam.github.com/2010/12/25/gae-xmpphandler</id>
+    <content type="html"><![CDATA[<p>Finally got time to continue developing Push Contacts. I've gotten a nerve-wrecking problem while developing with C2DM
+applications. When the app supposed to get the push message, it didn't respond to it. Looking at the logs I encountered
+an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
+of GTalk on the phone.</p>
+
+<!-- more -->
+
+
+<p>Ok now a tip related to Google App Engine development. I just added a new feature to Push Contacts which is allowing
+users to reply to the latest SMS received. I had to retrieve the email of the user the bot is chatting with to find
+which phone number to send the SMS to. Took a look at guru.appspot.com source code and decided to use
+<code>xmpp_handlers.CommandHandler</code>. Used this method <code>text_message(self, message)</code> and message.sender supposed to return the
+sender of a message but instead it returned an IM formatted string. Here is how you can retrieve the email.</p>
+
+<p>``` python
+class XMPPHandler(xmpp_handlers.CommandHandler):</p>
+
+<pre><code>def text_message(self, message):
+    idx  = message.sender.index('/')
+    user = message.sender[0:idx]
+    logging.debug(user)
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Simple web service with Google App Engine]]></title>
+    <link href="http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine/"/>
+    <updated>2010-06-13T13:44:00+10:00</updated>
+    <id>http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine</id>
+    <content type="html"><![CDATA[<p>It's been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I'm pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
+
+<!-- more -->
+
+
+<p>``` python
+import urllib
+import json
+from google.appengine.api import mail
+from google.appengine.ext import webapp, db
+from google.appengine.ext.webapp import util
+from google.appengine.ext.webapp.util import run_wsgi_app</p>
+
+<p>class Feedback(db.Model):</p>
+
+<pre><code>user     = db.StringProperty()
+heritage = db.StringProperty()
+comment  = db.StringProperty(multiline=True)
+star     = db.IntegerProperty()
+date     = db.DateTimeProperty(auto_now_add=True)
+
+#Convert feedback object into a dictionary
+def toDict(self):
+    return {'user': self.user,'heritage': self.heritage,
+                'comment': self.comment,'star':  self.star,'date': self.date}
+</code></pre>
+
+<p>class FeedbackGetter(webapp.RequestHandler):</p>
+
+<pre><code>def get(self,heritage):
+#Retrieve feedbacks of a particular heritage requested
+    heritage = urllib.unquote(heritage)
+    feedbacks = db.GqlQuery("SELECT * FROM Feedback WHERE heritage = :1", heritage)
+
+    feedDict = {}
+    for feedback in feedbacks:
+        feedDict[str(feedback.key())] = feedback.toDict()
+
+    self.response.out.write(json.encode(feedDict));
+</code></pre>
+
+<p>class FeedbackStore(webapp.RequestHandler):</p>
+
+<pre><code>def post(self):
+#Storing feedback in datastore
+    feedback = Feedback()
+    feedback.user     = self.request.get('email')
+    feedback.heritage = self.request.get('heritage')
+    feedback.comment  = self.request.get('comment')
+    feedback.star     = int(self.request.get('star'))
+    feedback.put()
+
+    #Sending confirmation email to the user
+    myemail         = mail.EmailMessage()
+    myemail.sender  = "World Heritage Site &lt;noreply@androidnam.appspotmail.com&gt;"
+    myemail.to      = feedback.user
+    myemail.subject = "Feedback on " + feedback.heritage
+    myemail.body    = '''
+    Thank you for submitting your feedback, \n
+    Heritage: %s \n
+    Comment: %s \n
+    Rating: %s 
+    ''' % (feedback.heritage, feedback.comment, feedback.star)
+    myemail.send()
+
+    self.redirect('/get/'+feedback.heritage)
+</code></pre>
+
+<p>class FeedbackForm(webapp.RequestHandler):</p>
+
+<pre><code>def get(self):
+    self.response.out.write("""
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;form action="/store" method="post"&gt;
+          Heritage:&lt;div&gt;&lt;input name="heritage" /&gt;&lt;/div&gt;
+          Email:&lt;div&gt;&lt;input name="email" /&gt;&lt;/div&gt;
+          Comment:&lt;div&gt;&lt;input name="comment" /&gt;&lt;/div&gt;
+          Star:&lt;div&gt;&lt;input name="star" /&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;input type="submit" value="Submit"&gt;&lt;/div&gt;
+        &lt;/form&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+    """)
+</code></pre>
+
+<p>application = webapp.WSGIApplication([(r'/get/(.*)', FeedbackGetter),</p>
+
+<pre><code>                  ('/store', FeedbackStore),
+                  ('/feedback', FeedbackForm)],
+                                  debug=True)
+</code></pre>
+
+<p>def main():</p>
+
+<pre><code>run_wsgi_app(application)
+</code></pre>
+
+<p>if <strong>name</strong> == "<strong>main</strong>":</p>
+
+<pre><code>main()
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

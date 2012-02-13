@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-13T13:46:48+11:00</updated>
+  <updated>2012-02-13T13:55:15+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[First post from Octopress]]></title>
-    <link href="http://geeknam.github.com/blog/2012/02/11/first-post-from-octopress/"/>
+    <link href="http://geeknam.github.com/2012/02/11/first-post-from-octopress/"/>
     <updated>2012-02-11T21:42:00+11:00</updated>
-    <id>http://geeknam.github.com/blog/2012/02/11/first-post-from-octopress</id>
+    <id>http://geeknam.github.com/2012/02/11/first-post-from-octopress</id>
     <content type="html"><![CDATA[<p>Hey there! This is my new blog powered by <a href="http://octopress.org/">Octropress</a> and hosted on Github.
 Octopress was exactly what I was looking for in a blog engine
 (Yes, code snippets should be built out of the box in a blog).
@@ -29,9 +29,9 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   
   <entry>
     <title type="html"><![CDATA[Fabric deployment]]></title>
-    <link href="http://geeknam.github.com/blog/2011/11/12/fabric-deployment/"/>
+    <link href="http://geeknam.github.com/2011/11/12/fabric-deployment/"/>
     <updated>2011-11-12T13:28:00+11:00</updated>
-    <id>http://geeknam.github.com/blog/2011/11/12/fabric-deployment</id>
+    <id>http://geeknam.github.com/2011/11/12/fabric-deployment</id>
     <content type="html"><![CDATA[<p>Having played with Capistrano before, I suddenly had an urge to find its Pythonic alternative. After few google searches, I stumbled upon Fabric. It&#8217;s basically a &#8220;python library and command-line tool for streamlining the use of SSH for application deployment or systems administration tasks&#8221;. Spent few minutes trying to write functions to deploy Django applications to my Linux server and I have to say, Fabric&#8217;s API is really easy to use, very customizable (it&#8217;s as easy as wrapping up your shell commands in a python function) and more importantly it has Django integration which I&#8217;m gonna need the most. Having said all these, here&#8217;s the video demo I recorded while messing around with Fabric, enjoy:</p>
 
 <p>P/S: django-nose, nosegrowl2 and tdaemon were used in order to show notification of testing results (just FYI)</p>
@@ -45,9 +45,9 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   
   <entry>
     <title type="html"><![CDATA[Fatal error: Call to undefined function _make_cat_compat()]]></title>
-    <link href="http://geeknam.github.com/blog/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/"/>
+    <link href="http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/"/>
     <updated>2011-11-05T13:23:00+11:00</updated>
-    <id>http://geeknam.github.com/blog/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat</id>
+    <id>http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat</id>
     <content type="html"><![CDATA[<p>If you have the following error after uploading your WordPress, and re-uploading <code>category-template.php</code> didn&#8217;t work, you could try pasting this function at the of the file.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -101,9 +101,9 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   
   <entry>
     <title type="html"><![CDATA[Aliases for Google Storage]]></title>
-    <link href="http://geeknam.github.com/blog/2011/06/11/aliases-for-google-storage/"/>
+    <link href="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/"/>
     <updated>2011-06-11T13:13:00+10:00</updated>
-    <id>http://geeknam.github.com/blog/2011/06/11/aliases-for-google-storage</id>
+    <id>http://geeknam.github.com/2011/06/11/aliases-for-google-storage</id>
     <content type="html"><![CDATA[<p>I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -127,9 +127,9 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   
   <entry>
     <title type="html"><![CDATA[Using PHP to parse git history]]></title>
-    <link href="http://geeknam.github.com/blog/2011/05/08/using-php-to-parse-git-history/"/>
+    <link href="http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/"/>
     <updated>2011-05-08T13:19:00+10:00</updated>
-    <id>http://geeknam.github.com/blog/2011/05/08/using-php-to-parse-git-history</id>
+    <id>http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history</id>
     <content type="html"><![CDATA[<p>Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet belongs to the project I&#8217;m currently working on.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -199,9 +199,9 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   
   <entry>
     <title type="html"><![CDATA[GAE XMPPHandler]]></title>
-    <link href="http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler/"/>
+    <link href="http://geeknam.github.com/2010/12/25/gae-xmpphandler/"/>
     <updated>2010-12-25T15:57:00+11:00</updated>
-    <id>http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler</id>
+    <id>http://geeknam.github.com/2010/12/25/gae-xmpphandler</id>
     <content type="html"><![CDATA[<p>Finally got time to continue developing Push Contacts. I&#8217;ve gotten a nerve-wrecking problem while developing with C2DM
 applications. When the app supposed to get the push message, it didn&#8217;t respond to it. Looking at the logs I encountered
 an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
@@ -233,9 +233,9 @@ sender of a message but instead it returned an IM formatted string. Here is how 
   
   <entry>
     <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>
-    <link href="http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
+    <link href="http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
     <updated>2010-12-05T13:34:00+11:00</updated>
-    <id>http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
+    <id>http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
     <content type="html"><![CDATA[<p>Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it:</p>
 
 <ol>
@@ -250,9 +250,9 @@ sender of a message but instead it returned an IM formatted string. Here is how 
   
   <entry>
     <title type="html"><![CDATA[TonidoPlug]]></title>
-    <link href="http://geeknam.github.com/blog/2010/11/28/tonidoplug/"/>
+    <link href="http://geeknam.github.com/2010/11/28/tonidoplug/"/>
     <updated>2010-11-28T15:19:00+11:00</updated>
-    <id>http://geeknam.github.com/blog/2010/11/28/tonidoplug</id>
+    <id>http://geeknam.github.com/2010/11/28/tonidoplug</id>
     <content type="html"><![CDATA[<p>Yes, <a href="http://tonidoplug.com" title="TonidoPlug">TonidoPlug</a> is a new toy that I&#8217;ve gotten last week. It is a basically a plug computer that can act likea home server. The hardware specs are the same as SheevaPlug with 1.2GHz ARM and 512MB RAM and 512MB Flash. The best thing
 about it is the energy consumption ranging from 5-10 Watts.</p>
 
@@ -295,9 +295,9 @@ stuff like:</p>
   
   <entry>
     <title type="html"><![CDATA[Simple web service with Google App Engine]]></title>
-    <link href="http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/"/>
+    <link href="http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine/"/>
     <updated>2010-06-13T13:44:00+10:00</updated>
-    <id>http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine</id>
+    <id>http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine</id>
     <content type="html"><![CDATA[<p>It&#8217;s been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I&#8217;m pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
 
 <!-- more -->

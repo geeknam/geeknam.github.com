@@ -1,45 +1,43 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>
-            http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/
-        </loc>
+        <loc>http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine/</loc>
         <lastmod>2012-02-13T13:46:41+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/2010/11/28/tonidoplug/</loc>
+        <loc>http://geeknam.github.com/2010/11/28/tonidoplug/</loc>
         <lastmod>2012-02-13T13:18:50+11:00</lastmod>
     </url>
     <url>
         <loc>
-            http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/
+            http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/
         </loc>
         <lastmod>2012-02-13T13:40:07+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler/</loc>
+        <loc>http://geeknam.github.com/2010/12/25/gae-xmpphandler/</loc>
         <lastmod>2012-02-13T13:41:26+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/2011/05/08/using-php-to-parse-git-history/</loc>
+        <loc>http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/</loc>
         <lastmod>2012-02-13T13:22:09+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/2011/06/11/aliases-for-google-storage/</loc>
+        <loc>http://geeknam.github.com/2011/06/11/aliases-for-google-storage/</loc>
         <lastmod>2012-02-13T13:40:57+11:00</lastmod>
     </url>
     <url>
         <loc>
-            http://geeknam.github.com/blog/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/
+            http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/
         </loc>
         <lastmod>2012-02-13T13:41:07+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/2011/11/12/fabric-deployment/</loc>
+        <loc>http://geeknam.github.com/2011/11/12/fabric-deployment/</loc>
         <lastmod>2012-02-13T13:33:40+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/2012/02/11/first-post-from-octopress/</loc>
+        <loc>http://geeknam.github.com/2012/02/11/first-post-from-octopress/</loc>
         <lastmod>2012-02-13T13:18:33+11:00</lastmod>
     </url>
     <url>

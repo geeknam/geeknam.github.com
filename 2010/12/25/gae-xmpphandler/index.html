@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - geeknam's blog</title>
+  <title>GAE XMPPHandler - geeknam's blog</title>
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="Blog Archive 2012 First post from Octopress
-Feb 11 2012 posted in blog, octopress 2011 Fabric deployment
-Nov 12 2011 posted in deployment, django, &hellip;">
+  <meta name="description" content="Finally got time to continue developing Push Contacts. I&#8217;ve gotten a nerve-wrecking problem while developing with C2DM
+applications. When the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ Nov 12 2011 posted in deployment, django, &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://geeknam.github.com/blog/archives">
+  <link rel="canonical" href="http://geeknam.github.com/2010/12/25/gae-xmpphandler">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -66,154 +65,122 @@ Nov 12 2011 posted in deployment, django, &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">GAE XMPPHandler</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-25T15:57:00+11:00" pubdate data-updated="true">Dec 25<span>th</span>, 2010</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><p>Finally got time to continue developing Push Contacts. I&#8217;ve gotten a nerve-wrecking problem while developing with C2DM
+applications. When the app supposed to get the push message, it didn&#8217;t respond to it. Looking at the logs I encountered
+an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
+of GTalk on the phone.</p>
 
-  
-  <h2>2012</h2>
-
-<article>
-  
-<h1><a href="/2012/02/11/first-post-from-octopress/">First post from Octopress</a></h1>
-<time datetime="2012-02-11T21:42:00+11:00" pubdate><span class='month'>Feb</span> <span class='day'>11</span> <span class='year'>2012</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/blog/'>blog</a>, <a class='category' href='/categories/octopress/'>octopress</a></span>
-</footer>
+<!-- more -->
 
 
-</article>
+<p>Ok now a tip related to Google App Engine development. I just added a new feature to Push Contacts which is allowing
+users to reply to the latest SMS received. I had to retrieve the email of the user the bot is chatting with to find
+which phone number to send the SMS to. Took a look at guru.appspot.com source code and decided to use
+<code>xmpp_handlers.CommandHandler</code>. Used this method <code>text_message(self, message)</code> and message.sender supposed to return the
+sender of a message but instead it returned an IM formatted string. Here is how you can retrieve the email.</p>
 
-
-
-  
-  <h2>2011</h2>
-
-<article>
-  
-<h1><a href="/2011/11/12/fabric-deployment/">Fabric deployment</a></h1>
-<time datetime="2011-11-12T13:28:00+11:00" pubdate><span class='month'>Nov</span> <span class='day'>12</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/deployment/'>deployment</a>, <a class='category' href='/categories/django/'>django</a>, <a class='category' href='/categories/fabric/'>fabric</a>, <a class='category' href='/categories/python/'>python</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/">Fatal error: Call to undefined function _make_cat_compat()</a></h1>
-<time datetime="2011-11-05T13:23:00+11:00" pubdate><span class='month'>Nov</span> <span class='day'>05</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/error/'>error</a>, <a class='category' href='/categories/fix/'>fix</a>, <a class='category' href='/categories/php/'>php</a>, <a class='category' href='/categories/wordpress/'>wordpress</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/2011/06/11/aliases-for-google-storage/">Aliases for Google Storage</a></h1>
-<time datetime="2011-06-11T13:13:00+10:00" pubdate><span class='month'>Jun</span> <span class='day'>11</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/alias/'>alias</a>, <a class='category' href='/categories/bash/'>bash</a>, <a class='category' href='/categories/google/'>google</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/2011/05/08/using-php-to-parse-git-history/">Using PHP to parse git history</a></h1>
-<time datetime="2011-05-08T13:19:00+10:00" pubdate><span class='month'>May</span> <span class='day'>08</span> <span class='year'>2011</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/git/'>git</a>, <a class='category' href='/categories/history/'>history</a>, <a class='category' href='/categories/parse/'>parse</a>, <a class='category' href='/categories/php/'>php</a></span>
-</footer>
-
-
-</article>
-
-
-
-  
-  <h2>2010</h2>
-
-<article>
-  
-<h1><a href="/2010/12/25/gae-xmpphandler/">GAE XMPPHandler</a></h1>
-<time datetime="2010-12-25T15:57:00+11:00" pubdate><span class='month'>Dec</span> <span class='day'>25</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/appengine/'>appengine</a>, <a class='category' href='/categories/google/'>google</a>, <a class='category' href='/categories/python/'>python</a>, <a class='category' href='/categories/xmpp/'>xmpp</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/">Fix screwed up keyboard layout on Ubuntu 9.04</a></h1>
-<time datetime="2010-12-05T13:34:00+11:00" pubdate><span class='month'>Dec</span> <span class='day'>05</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/fix/'>fix</a>, <a class='category' href='/categories/keyboard/'>keyboard</a>, <a class='category' href='/categories/linux/'>linux</a>, <a class='category' href='/categories/ubuntu/'>ubuntu</a>, <a class='category' href='/categories/vnc/'>vnc</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/2010/11/28/tonidoplug/">TonidoPlug</a></h1>
-<time datetime="2010-11-28T15:19:00+11:00" pubdate><span class='month'>Nov</span> <span class='day'>28</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/linux/'>linux</a>, <a class='category' href='/categories/plug-computers/'>plug computers</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/2010/06/13/simple-web-service-with-google-app-engine/">Simple web service with Google App Engine</a></h1>
-<time datetime="2010-06-13T13:44:00+10:00" pubdate><span class='month'>Jun</span> <span class='day'>13</span> <span class='year'>2010</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/categories/appengine/'>appengine</a>, <a class='category' href='/categories/google/'>google</a>, <a class='category' href='/categories/json/'>json</a>, <a class='category' href='/categories/web-service/'>web service</a></span>
-</footer>
-
-
-</article>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">XMPPHandler</span><span class="p">(</span><span class="n">xmpp_handlers</span><span class="o">.</span><span class="n">CommandHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">text_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">idx</span>  <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">sender</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">user</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">sender</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Ngo Minh Nam</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-25T15:57:00+11:00" pubdate data-updated="true">Dec 25<span>th</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/categories/appengine/'>appengine</a>, <a class='category' href='/categories/google/'>google</a>, <a class='category' href='/categories/python/'>python</a>, <a class='category' href='/categories/xmpp/'>xmpp</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2010/12/25/gae-xmpphandler/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2010/12/25/gae-xmpphandler/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/" title="Previous Post: Fix screwed up keyboard layout on Ubuntu 9.04">&laquo; Fix screwed up keyboard layout on Ubuntu 9.04</a>
+      
+      
+        <a class="basic-alignment right" href="/2011/05/08/using-php-to-parse-git-history/" title="next Post: Using PHP to parse git history">Using PHP to parse git history &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -314,7 +281,10 @@ Nov 12 2011 posted in deployment, django, &hellip;">
       var disqus_shortname = 'geeknamsblog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://geeknam.github.com/2010/12/25/gae-xmpphandler/';
+        var disqus_url = 'http://geeknam.github.com/2010/12/25/gae-xmpphandler/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

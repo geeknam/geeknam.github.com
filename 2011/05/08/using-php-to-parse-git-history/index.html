@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using PHP to parse git history - geeknam's blog</title>
+  <meta name="author" content="Ngo Minh Nam">
+
+  
+  <meta name="description" content="Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="geeknam's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">geeknam's blog</a></h1>
+  
+    <h2>mainly on how I started loving snakes and ponies.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:geeknam.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about/">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using PHP to Parse Git History</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-08T13:19:00+10:00" pubdate data-updated="true">May 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet belongs to the project I&#8217;m currently working on.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">// Author: Ngo Minh Nam</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/your/repo/&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$output</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="nb">chdir</span><span class="p">(</span><span class="nv">$dir</span><span class="p">);</span>
+</span><span class='line'><span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;git log&quot;</span><span class="p">,</span><span class="nv">$output</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$history</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$output</span> <span class="k">as</span> <span class="nv">$line</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;commit&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$commit</span><span class="p">)){</span>
+</span><span class='line'>            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$history</span><span class="p">,</span> <span class="nv">$commit</span><span class="p">);</span>
+</span><span class='line'>            <span class="nb">unset</span><span class="p">(</span><span class="nv">$commit</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;commit&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;Author&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;author&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;Author:&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;Date:&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">{</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span>  <span class="o">.=</span> <span class="nv">$line</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$history</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ngo Minh Nam</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-08T13:19:00+10:00" pubdate data-updated="true">May 8<span>th</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/categories/git/'>git</a>, <a class='category' href='/categories/history/'>history</a>, <a class='category' href='/categories/parse/'>parse</a>, <a class='category' href='/categories/php/'>php</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/12/25/gae-xmpphandler/" title="Previous Post: GAE XMPPHandler">&laquo; GAE XMPPHandler</a>
+      
+      
+        <a class="basic-alignment right" href="/2011/06/11/aliases-for-google-storage/" title="next Post: Aliases for Google Storage">Aliases for Google Storage &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2012/02/11/first-post-from-octopress/">First post from Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/12/fabric-deployment/">Fabric deployment</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/">Fatal error: Call to undefined function _make_cat_compat()</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/06/11/aliases-for-google-storage/">Aliases for Google Storage</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/05/08/using-php-to-parse-git-history/">Using PHP to parse git history</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/geeknam">@geeknam</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'geeknam',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("ngominhnam", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/ngominhnam" class="twitter-follow-button" data-show-count="false">Follow @ngominhnam</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Ngo Minh Nam -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'geeknamsblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/';
+        var disqus_url = 'http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
