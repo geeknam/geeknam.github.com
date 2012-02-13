@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Octopress | geeknam's blog]]></title>
+  <title><![CDATA[Category: octopress | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-13T11:03:30+11:00</updated>
+  <updated>2012-02-13T13:46:48+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>

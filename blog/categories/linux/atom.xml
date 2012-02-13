@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: linux | geeknam's blog]]></title>
+  <link href="http://geeknam.github.com/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://geeknam.github.com/"/>
+  <updated>2012-02-13T13:46:48+11:00</updated>
+  <id>http://geeknam.github.com/</id>
+  <author>
+    <name><![CDATA[Ngo Minh Nam]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>
+    <link href="http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
+    <updated>2010-12-05T13:34:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
+    <content type="html"><![CDATA[<p>Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it:</p>
+
+<ol>
+<li>Kill existing vnc session: <code>vncserver -kill :1</code> (1 here is the pid)</li>
+<li>Edit with: <code>nano /root/.vnc/xstartup</code></li>
+<li>Add this line: <code>export XKL_XMODMAP_DISABLE=1</code></li>
+<li>Restart vncserver</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[TonidoPlug]]></title>
+    <link href="http://geeknam.github.com/blog/2010/11/28/tonidoplug/"/>
+    <updated>2010-11-28T15:19:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2010/11/28/tonidoplug</id>
+    <content type="html"><![CDATA[<p>Yes, <a href="http://tonidoplug.com" title="TonidoPlug">TonidoPlug</a> is a new toy that I've gotten last week. It is a basically a plug computer that can act likea home server. The hardware specs are the same as SheevaPlug with 1.2GHz ARM and 512MB RAM and 512MB Flash. The best thing
+about it is the energy consumption ranging from 5-10 Watts.</p>
+
+<!-- more -->
+
+
+<p>So what's the difference between TonidoPlug and SheevaPlug? The main and the most noticeable difference is the built-in
+software that TonidoPlug provides which makes it really easy to get started with. It's seriously just plug-and-play and
+you will get all kinds of stuffs you need: torrent (yes torrenting 24/7 is leet), music player (that allows streaming),
+sharing files and photos, mounting drives.</p>
+
+<p>But the problem with this is the limitation of applications you can install. What if you want to run an rsync server or
+install a LAMP stack? Luckily there is an open source project called PlugApps that allows users to have more
+flexibility. Some kind souls have compiled Arch Linux and port it to work on a SheevaPlug hardware. They named it
+Plugbox. SheevaPlug naturally runs on Ubuntu 9.04 but apparently Ubuntu has dropped support for ARM that's why Arch
+Linux would be a perfect suit.</p>
+
+<p>I'm currently trying to run Plugbox from my external hard drive that has 2 partitions but TonidoPlug doesn't seem to
+boot from it. I'm gonna dive deeper into this. Will update the blog once I get it to work.</p>
+
+<p><strong>Edited</strong><br/>
+Ok, like finally I got TonidoPlug booting from external hard drive but it still runs on Tonido (Ubuntu 9.04). There's
+no way I can make it boot from  external hard drive with PlugBox. The problem was with reboot command, I had to make a
+cold boot (plug and unplug the power source) in order for the plug to boot into my Samsung G3. I've recently installed awesome
+stuff like:</p>
+
+<ul>
+<li>webmin (for sysadmin)</li>
+<li>gitosis (for git repos)</li>
+<li>mt-daapd (iTunes Server)</li>
+<li>ettercap (to monitor my home network)</li>
+<li>lsyncd (to synchronize files)</li>
+<li>nginx (for reverse proxy and web server)</li>
+<li>django (web apps running with gunicorn)</li>
+<li>transmission (torrent server)</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-13T11:03:30+11:00</updated>
+  <updated>2012-02-13T13:46:48+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -28,6 +28,176 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[Fabric deployment]]></title>
+    <link href="http://geeknam.github.com/blog/2011/11/12/fabric-deployment/"/>
+    <updated>2011-11-12T13:28:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2011/11/12/fabric-deployment</id>
+    <content type="html"><![CDATA[<p>Having played with Capistrano before, I suddenly had an urge to find its Pythonic alternative. After few google searches, I stumbled upon Fabric. It&#8217;s basically a &#8220;python library and command-line tool for streamlining the use of SSH for application deployment or systems administration tasks&#8221;. Spent few minutes trying to write functions to deploy Django applications to my Linux server and I have to say, Fabric&#8217;s API is really easy to use, very customizable (it&#8217;s as easy as wrapping up your shell commands in a python function) and more importantly it has Django integration which I&#8217;m gonna need the most. Having said all these, here&#8217;s the video demo I recorded while messing around with Fabric, enjoy:</p>
+
+<p>P/S: django-nose, nosegrowl2 and tdaemon were used in order to show notification of testing results (just FYI)</p>
+
+<object class="BLOGGER-youtube-video" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" data-thumbnail-src="http://i.ytimg.com/vi/xtmb-5WPWQs/0.jpg" height="266" width="320"><param name="movie" value="http://www.youtube.com/v/xtmb-5WPWQs?version=3&f=user_uploads&c=google-webdrive-0&app=youtube_gdata" />
+<param name="bgcolor" value="#FFFFFF" />
+<embed width="620" height="420"  src="http://www.youtube.com/v/xtmb-5WPWQs?version=3&f=user_uploads&c=google-webdrive-0&app=youtube_gdata" type="application/x-shockwave-flash"></embed></object>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Fatal error: Call to undefined function _make_cat_compat()]]></title>
+    <link href="http://geeknam.github.com/blog/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/"/>
+    <updated>2011-11-05T13:23:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat</id>
+    <content type="html"><![CDATA[<p>If you have the following error after uploading your WordPress, and re-uploading <code>category-template.php</code> didn&#8217;t work, you could try pasting this function at the of the file.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">_make_cat_compat</span><span class="p">(</span> <span class="o">&amp;</span><span class="nv">$category</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="nb">is_object</span><span class="p">(</span> <span class="nv">$category</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">cat_ID</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">term_id</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_count</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_description</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">description</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">cat_name</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_nicename</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">slug</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_parent</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">parent</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">elseif</span> <span class="p">(</span> <span class="nb">is_array</span><span class="p">(</span> <span class="nv">$category</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">isset</span><span class="p">(</span> <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;term_id&#39;</span><span class="p">]</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;cat_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;term_id&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;cat_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_nicename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;slug&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_parent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;parent&#39;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Aliases for Google Storage]]></title>
+    <link href="http://geeknam.github.com/blog/2011/06/11/aliases-for-google-storage/"/>
+    <updated>2011-06-11T13:13:00+10:00</updated>
+    <id>http://geeknam.github.com/blog/2011/06/11/aliases-for-google-storage</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">function </span>gsup<span class="o">(){</span>
+</span><span class='line'>    gsutil cp <span class="s2">&quot;$@&quot;</span> gs://bucketname.com
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>gsdown<span class="o">(){</span>
+</span><span class='line'>    gsutil cp gs://bucketname.com/<span class="s2">&quot;$@&quot;</span> ~/Desktop
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using PHP to parse git history]]></title>
+    <link href="http://geeknam.github.com/blog/2011/05/08/using-php-to-parse-git-history/"/>
+    <updated>2011-05-08T13:19:00+10:00</updated>
+    <id>http://geeknam.github.com/blog/2011/05/08/using-php-to-parse-git-history</id>
+    <content type="html"><![CDATA[<p>Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet belongs to the project I&#8217;m currently working on.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">// Author: Ngo Minh Nam</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/your/repo/&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$output</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="nb">chdir</span><span class="p">(</span><span class="nv">$dir</span><span class="p">);</span>
+</span><span class='line'><span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;git log&quot;</span><span class="p">,</span><span class="nv">$output</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$history</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$output</span> <span class="k">as</span> <span class="nv">$line</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;commit&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$commit</span><span class="p">)){</span>
+</span><span class='line'>            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$history</span><span class="p">,</span> <span class="nv">$commit</span><span class="p">);</span>
+</span><span class='line'>            <span class="nb">unset</span><span class="p">(</span><span class="nv">$commit</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;commit&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;Author&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;author&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;Author:&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;Date:&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">{</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span>  <span class="o">.=</span> <span class="nv">$line</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$history</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[GAE XMPPHandler]]></title>
     <link href="http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler/"/>
     <updated>2010-12-25T15:57:00+11:00</updated>
@@ -43,7 +213,7 @@ of GTalk on the phone.</p>
 <p>Ok now a tip related to Google App Engine development. I just added a new feature to Push Contacts which is allowing
 users to reply to the latest SMS received. I had to retrieve the email of the user the bot is chatting with to find
 which phone number to send the SMS to. Took a look at guru.appspot.com source code and decided to use
-xmpp_handlers.CommandHandler. Used this method text_message(self, message) and message.sender supposed to return the
+<code>xmpp_handlers.CommandHandler</code>. Used this method <code>text_message(self, message)</code> and message.sender supposed to return the
 sender of a message but instead it returned an IM formatted string. Here is how you can retrieve the email.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -57,6 +227,23 @@ sender of a message but instead it returned an IM formatted string. Here is how 
 </span><span class='line'>        <span class="n">user</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">sender</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx</span><span class="p">]</span>
 </span><span class='line'>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>
+    <link href="http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
+    <updated>2010-12-05T13:34:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
+    <content type="html"><![CDATA[<p>Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it:</p>
+
+<ol>
+<li>Kill existing vnc session: <code>vncserver -kill :1</code> (1 here is the pid)</li>
+<li>Edit with: <code>nano /root/.vnc/xstartup</code></li>
+<li>Add this line: <code>export XKL_XMODMAP_DISABLE=1</code></li>
+<li>Restart vncserver</li>
+</ol>
 
 ]]></content>
   </entry>
@@ -102,6 +289,195 @@ stuff like:</p>
 <li>django (web apps running with gunicorn)</li>
 <li>transmission (torrent server)</li>
 </ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Simple web service with Google App Engine]]></title>
+    <link href="http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/"/>
+    <updated>2010-06-13T13:44:00+10:00</updated>
+    <id>http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine</id>
+    <content type="html"><![CDATA[<p>It&#8217;s been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I&#8217;m pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">json</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.api</span> <span class="kn">import</span> <span class="n">mail</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext</span> <span class="kn">import</span> <span class="n">webapp</span><span class="p">,</span> <span class="n">db</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext.webapp</span> <span class="kn">import</span> <span class="n">util</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext.webapp.util</span> <span class="kn">import</span> <span class="n">run_wsgi_app</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Feedback</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">user</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">heritage</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">comment</span>  <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">(</span><span class="n">multiline</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">star</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">IntegerProperty</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">date</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">DateTimeProperty</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Convert feedback object into a dictionary</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">toDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span><span class="s">&#39;heritage&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">heritage</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s">&#39;comment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span><span class="s">&#39;star&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">star</span><span class="p">,</span><span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackGetter</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">heritage</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Retrieve feedbacks of a particular heritage requested</span>
+</span><span class='line'>        <span class="n">heritage</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">heritage</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedbacks</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">GqlQuery</span><span class="p">(</span><span class="s">&quot;SELECT * FROM Feedback WHERE heritage = :1&quot;</span><span class="p">,</span> <span class="n">heritage</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">feedDict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">feedback</span> <span class="ow">in</span> <span class="n">feedbacks</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">feedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">feedback</span><span class="o">.</span><span class="n">key</span><span class="p">())]</span> <span class="o">=</span> <span class="n">feedback</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">feedDict</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackStore</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Storing feedback in datastore</span>
+</span><span class='line'>        <span class="n">feedback</span> <span class="o">=</span> <span class="n">Feedback</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">user</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;email&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;heritage&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">comment</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;comment&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">star</span>     <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;star&#39;</span><span class="p">))</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">put</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c">#Sending confirmation email to the user</span>
+</span><span class='line'>        <span class="n">myemail</span>         <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">EmailMessage</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">sender</span>  <span class="o">=</span> <span class="s">&quot;World Heritage Site &lt;noreply@androidnam.appspotmail.com&gt;&quot;</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">to</span>      <span class="o">=</span> <span class="n">feedback</span><span class="o">.</span><span class="n">user</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="s">&quot;Feedback on &quot;</span> <span class="o">+</span> <span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">body</span>    <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="s">        Thank you for submitting your feedback, </span><span class="se">\n</span><span class="s"></span>
+</span><span class='line'><span class="s">        Heritage: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s"></span>
+</span><span class='line'><span class="s">        Comment: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s"></span>
+</span><span class='line'><span class="s">        Rating: </span><span class="si">%s</span><span class="s"> </span>
+</span><span class='line'><span class="s">        &#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span><span class="p">,</span> <span class="n">feedback</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">feedback</span><span class="o">.</span><span class="n">star</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/get/&#39;</span><span class="o">+</span><span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackForm</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">        &lt;html&gt;</span>
+</span><span class='line'><span class="s">          &lt;body&gt;</span>
+</span><span class='line'><span class="s">            &lt;form action=&quot;/store&quot; method=&quot;post&quot;&gt;</span>
+</span><span class='line'><span class="s">              Heritage:&lt;div&gt;&lt;input name=&quot;heritage&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              Email:&lt;div&gt;&lt;input name=&quot;email&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              Comment:&lt;div&gt;&lt;input name=&quot;comment&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              Star:&lt;div&gt;&lt;input name=&quot;star&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              &lt;div&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot;&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">            &lt;/form&gt;</span>
+</span><span class='line'><span class="s">          &lt;/body&gt;</span>
+</span><span class='line'><span class="s">        &lt;/html&gt;</span>
+</span><span class='line'><span class="s">        &quot;&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">application</span> <span class="o">=</span> <span class="n">webapp</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([(</span><span class="s">r&#39;/get/(.*)&#39;</span><span class="p">,</span> <span class="n">FeedbackGetter</span><span class="p">),</span>
+</span><span class='line'>                      <span class="p">(</span><span class="s">&#39;/store&#39;</span><span class="p">,</span> <span class="n">FeedbackStore</span><span class="p">),</span>
+</span><span class='line'>                      <span class="p">(</span><span class="s">&#39;/feedback&#39;</span><span class="p">,</span> <span class="n">FeedbackForm</span><span class="p">)],</span>
+</span><span class='line'>                                      <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">run_wsgi_app</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>

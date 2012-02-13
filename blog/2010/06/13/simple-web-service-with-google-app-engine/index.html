@@ -1,0 +1,486 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Simple web service with Google App Engine - geeknam's blog</title>
+  <meta name="author" content="Ngo Minh Nam">
+
+  
+  <meta name="description" content="It&#8217;s been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="geeknam's blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">geeknam's blog</a></h1>
+  
+    <h2>mainly on how I started loving snakes and ponies.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:geeknam.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about/">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Simple Web Service With Google App Engine</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-13T13:44:00+10:00" pubdate data-updated="true">Jun 13<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>It&#8217;s been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I&#8217;m pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">json</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.api</span> <span class="kn">import</span> <span class="n">mail</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext</span> <span class="kn">import</span> <span class="n">webapp</span><span class="p">,</span> <span class="n">db</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext.webapp</span> <span class="kn">import</span> <span class="n">util</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext.webapp.util</span> <span class="kn">import</span> <span class="n">run_wsgi_app</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Feedback</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">user</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">heritage</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">comment</span>  <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">(</span><span class="n">multiline</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">star</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">IntegerProperty</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">date</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">DateTimeProperty</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c">#Convert feedback object into a dictionary</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">toDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span><span class="s">&#39;heritage&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">heritage</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s">&#39;comment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span><span class="s">&#39;star&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">star</span><span class="p">,</span><span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackGetter</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">heritage</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Retrieve feedbacks of a particular heritage requested</span>
+</span><span class='line'>        <span class="n">heritage</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">heritage</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedbacks</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">GqlQuery</span><span class="p">(</span><span class="s">&quot;SELECT * FROM Feedback WHERE heritage = :1&quot;</span><span class="p">,</span> <span class="n">heritage</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">feedDict</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">feedback</span> <span class="ow">in</span> <span class="n">feedbacks</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">feedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">feedback</span><span class="o">.</span><span class="n">key</span><span class="p">())]</span> <span class="o">=</span> <span class="n">feedback</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">feedDict</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackStore</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Storing feedback in datastore</span>
+</span><span class='line'>        <span class="n">feedback</span> <span class="o">=</span> <span class="n">Feedback</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">user</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;email&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;heritage&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">comment</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;comment&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">star</span>     <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;star&#39;</span><span class="p">))</span>
+</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">put</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c">#Sending confirmation email to the user</span>
+</span><span class='line'>        <span class="n">myemail</span>         <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">EmailMessage</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">sender</span>  <span class="o">=</span> <span class="s">&quot;World Heritage Site &lt;noreply@androidnam.appspotmail.com&gt;&quot;</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">to</span>      <span class="o">=</span> <span class="n">feedback</span><span class="o">.</span><span class="n">user</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="s">&quot;Feedback on &quot;</span> <span class="o">+</span> <span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">body</span>    <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+</span><span class='line'><span class="s">        Thank you for submitting your feedback, </span><span class="se">\n</span><span class="s"></span>
+</span><span class='line'><span class="s">        Heritage: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s"></span>
+</span><span class='line'><span class="s">        Comment: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s"></span>
+</span><span class='line'><span class="s">        Rating: </span><span class="si">%s</span><span class="s"> </span>
+</span><span class='line'><span class="s">        &#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span><span class="p">,</span> <span class="n">feedback</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">feedback</span><span class="o">.</span><span class="n">star</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/get/&#39;</span><span class="o">+</span><span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackForm</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="s">        &lt;html&gt;</span>
+</span><span class='line'><span class="s">          &lt;body&gt;</span>
+</span><span class='line'><span class="s">            &lt;form action=&quot;/store&quot; method=&quot;post&quot;&gt;</span>
+</span><span class='line'><span class="s">              Heritage:&lt;div&gt;&lt;input name=&quot;heritage&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              Email:&lt;div&gt;&lt;input name=&quot;email&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              Comment:&lt;div&gt;&lt;input name=&quot;comment&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              Star:&lt;div&gt;&lt;input name=&quot;star&quot; /&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">              &lt;div&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot;&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="s">            &lt;/form&gt;</span>
+</span><span class='line'><span class="s">          &lt;/body&gt;</span>
+</span><span class='line'><span class="s">        &lt;/html&gt;</span>
+</span><span class='line'><span class="s">        &quot;&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">application</span> <span class="o">=</span> <span class="n">webapp</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([(</span><span class="s">r&#39;/get/(.*)&#39;</span><span class="p">,</span> <span class="n">FeedbackGetter</span><span class="p">),</span>
+</span><span class='line'>                      <span class="p">(</span><span class="s">&#39;/store&#39;</span><span class="p">,</span> <span class="n">FeedbackStore</span><span class="p">),</span>
+</span><span class='line'>                      <span class="p">(</span><span class="s">&#39;/feedback&#39;</span><span class="p">,</span> <span class="n">FeedbackForm</span><span class="p">)],</span>
+</span><span class='line'>                                      <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">run_wsgi_app</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ngo Minh Nam</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-06-13T13:44:00+10:00" pubdate data-updated="true">Jun 13<span>th</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/appengine/'>appengine</a>, <a class='category' href='/blog/categories/google/'>google</a>, <a class='category' href='/blog/categories/json/'>json</a>, <a class='category' href='/blog/categories/web-service/'>web service</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2010/11/28/tonidoplug/" title="next Post: TonidoPlug">TonidoPlug &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/02/11/first-post-from-octopress/">First post from Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/12/fabric-deployment/">Fabric deployment</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/">Fatal error: Call to undefined function _make_cat_compat()</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/06/11/aliases-for-google-storage/">Aliases for Google Storage</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/05/08/using-php-to-parse-git-history/">Using PHP to parse git history</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/geeknam">@geeknam</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'geeknam',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("ngominhnam", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/ngominhnam" class="twitter-follow-button" data-show-count="false">Follow @ngominhnam</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Ngo Minh Nam -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'geeknamsblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/';
+        var disqus_url = 'http://geeknam.github.com/blog/2010/06/13/simple-web-service-with-google-app-engine/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
