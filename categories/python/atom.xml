@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/python/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-13T15:11:14+11:00</updated>
+  <updated>2012-02-13T16:16:13+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,101 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Django dynamic unsubscribe forms]]></title>
+    <link href="http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms/"/>
+    <updated>2012-02-13T15:40:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms</id>
+    <content type="html"><![CDATA[<p>The normal usecase of Django forms is to have predefined fields in forms like this:</p>
+
+<p>``` python
+from django import forms</p>
+
+<p>class EmailPreferenceForm(forms.Form):</p>
+
+<pre><code>daily_digest = forms.BooleanField(required=False)
+weekly_news = forms.BooleanField(required=False)
+monthly_summary = forms.BooleanField(required=False)
+</code></pre>
+
+<p>```</p>
+
+<p>What if we wanted to add more fields to the form like <code>weekly_digest</code> and so on? Well, of course you would have to add a new field to the form and maybe handle extra work in your views. Let's make this more dynamic.</p>
+
+<!-- more -->
+
+
+<p>Let's create Event model which will store all events. Entries from this model will be generated into fields in the form later:</p>
+
+<p>``` python
+from django.db import models</p>
+
+<p>class Event(models.Model):</p>
+
+<pre><code>title = models.CharField(
+    max_length=100,
+    help_text='e.g: Weekly News'
+)
+title_id = models.CharField(
+    max_length=100,
+    blank=True,
+    editable=False
+)
+
+def __unicode__(self):
+    return self.title
+
+def save(self, *args, **kwargs):
+    if not self.title_id:
+        # Generate title_id based on title
+        # Weekly News &gt; weekly_news
+        self.title_id = self.title.lower().replace(' ', '_').replace("'", '')
+</code></pre>
+
+<p>```</p>
+
+<p>And now the form that will generate fields based on all entries in Event model</p>
+
+<p>``` python
+from django import forms
+from models import Event</p>
+
+<p>class EmailPreferenceForm(forms.Form):</p>
+
+<pre><code># Auto generate fields based on title_id in Event
+def __init__(self, *args, **kwargs):
+    super(EmailPreferenceForm, self).__init__(*args, **kwargs)
+    fields = Event.objects.all()
+    for f in fields:
+        self.fields[f.title_id] = forms.BooleanField(required=False)
+</code></pre>
+
+<p>```</p>
+
+<p>Let's say you have a Subscriber model that has many Events. This piece of code will initialize the checkboxes based on subscribers' preferences.</p>
+
+<p>``` python
+from forms import EmailPreferenceForm</p>
+
+<p>def email_preferences(request):</p>
+
+<pre><code>if request.method == 'POST':
+    email_preferences = EmailPreferenceForm(request.POST)
+    # Process the form
+else:
+    # Initialize the preferences. This will make the boxes checked.
+    initial = {}
+    for e in subscriber.events.all():
+        initial[e.title_id] = True
+    email_preferences = EmailPreferenceForm(initial=initial)
+
+# Context and HTTPResponses here
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Loading fixtures in Django tests]]></title>
