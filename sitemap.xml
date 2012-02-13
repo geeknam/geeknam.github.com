@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+    <url>
+        <loc>http://geeknam.github.com/blog/2010/11/28/tonidoplug/</loc>
+        <lastmod>2012-02-13T10:59:49+11:00</lastmod>
+    </url>
+    <url>
+        <loc>http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler/</loc>
+        <lastmod>2012-02-13T10:59:49+11:00</lastmod>
+    </url>
+    <url>
+        <loc>http://geeknam.github.com/blog/2012/02/11/first-post-from-octopress/</loc>
+        <lastmod>2012-02-13T10:59:47+11:00</lastmod>
+    </url>
+    <url>
+        <loc>http://geeknam.github.com/about/</loc>
+        <lastmod>2012-02-13T10:59:58+11:00</lastmod>
+    </url>
+    <url>
+        <loc>http://geeknam.github.com/blog/archives/</loc>
+        <lastmod>2012-02-13T10:59:49+11:00</lastmod>
+    </url>
+    <url>
+        <loc>http://geeknam.github.com/</loc>
+        <lastmod>2012-02-13T10:59:49+11:00</lastmod>
+    </url>
+</urlset>

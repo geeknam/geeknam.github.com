@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: python | geeknam's blog]]></title>
+  <link href="http://geeknam.github.com/blog/categories/python/atom.xml" rel="self"/>
+  <link href="http://geeknam.github.com/"/>
+  <updated>2012-02-13T11:03:30+11:00</updated>
+  <id>http://geeknam.github.com/</id>
+  <author>
+    <name><![CDATA[Ngo Minh Nam]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GAE XMPPHandler]]></title>
+    <link href="http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler/"/>
+    <updated>2010-12-25T15:57:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2010/12/25/gae-xmpphandler</id>
+    <content type="html"><![CDATA[<p>Finally got time to continue developing Push Contacts. I've gotten a nerve-wrecking problem while developing with C2DM
+applications. When the app supposed to get the push message, it didn't respond to it. Looking at the logs I encountered
+an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
+of GTalk on the phone.</p>
+
+<!-- more -->
+
+
+<p>Ok now a tip related to Google App Engine development. I just added a new feature to Push Contacts which is allowing
+users to reply to the latest SMS received. I had to retrieve the email of the user the bot is chatting with to find
+which phone number to send the SMS to. Took a look at guru.appspot.com source code and decided to use
+xmpp_handlers.CommandHandler. Used this method text_message(self, message) and message.sender supposed to return the
+sender of a message but instead it returned an IM formatted string. Here is how you can retrieve the email.</p>
+
+<p>``` python
+class XMPPHandler(xmpp_handlers.CommandHandler):</p>
+
+<pre><code>def text_message(self, message):
+    idx  = message.sender.index('/')
+    user = message.sender[0:idx]
+    logging.debug(user)
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Octopress | geeknam's blog]]></title>
+  <link href="http://geeknam.github.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://geeknam.github.com/"/>
+  <updated>2012-02-13T11:03:30+11:00</updated>
+  <id>http://geeknam.github.com/</id>
+  <author>
+    <name><![CDATA[Ngo Minh Nam]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[First post from Octopress]]></title>
+    <link href="http://geeknam.github.com/blog/2012/02/11/first-post-from-octopress/"/>
+    <updated>2012-02-11T21:42:00+11:00</updated>
+    <id>http://geeknam.github.com/blog/2012/02/11/first-post-from-octopress</id>
+    <content type="html"><![CDATA[<p>Hey there! This is my new blog powered by <a href="http://octopress.org/">Octropress</a> and hosted on Github.
+Octopress was exactly what I was looking for in a blog engine
+(Yes, code snippets should be built out of the box in a blog).
+I've had Blogger previously but ever since I switched it to the new theme, all my github gists
+were not able to display. So I abandoned it. I might migrate the posts from Blogger here, however I'll mainly
+focus on writing about Python and Django in this one. That's about it, stay tuned for the next post. :wq</p>
+]]></content>
+  </entry>
+  
+</feed>
