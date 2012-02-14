@@ -9,7 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, &hellip;">
+  <meta name="description" content="When using Python to automate your work, threading is one thing you need to know of. I&#8217;ve got into a problem with threading when parsing time. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,47 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/02/14/python-strptime-is-not-thread-safe/">Python Strptime Is Not Thread-safe</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-14T15:30:00+11:00" pubdate data-updated="true">Feb 14<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When using Python to automate your work, threading is one thing you need to know of. I&#8217;ve got into a problem with threading when parsing time. To be exact: <code>datetime.datetime.strptime()</code> function was not thread-safe. Luckily, I found a solution on <a href="http://stackoverflow.com/questions/4625149/fixed-strptime-exception-with-thread-lock-but-slows-down-the-program">StackOverflow</a>.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/2012/02/14/python-strptime-is-not-thread-safe/">Read more &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -577,50 +618,6 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/12/25/gae-xmpphandler/">GAE XMPPHandler</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-12-25T15:57:00+11:00" pubdate data-updated="true">Dec 25<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Finally got time to continue developing Push Contacts. I&#8217;ve gotten a nerve-wrecking problem while developing with C2DM
-applications. When the app supposed to get the push message, it didn&#8217;t respond to it. Looking at the logs I encountered
-an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
-of GTalk on the phone.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/2010/12/25/gae-xmpphandler/">Read more &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -636,6 +633,10 @@ of GTalk on the phone.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/02/14/python-strptime-is-not-thread-safe/">Python strptime is not thread-safe</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/">Regenerating Google&#8217;s ClientLogin AuthToken in Django</a>
       </li>
     
@@ -649,10 +650,6 @@ of GTalk on the phone.</p>
     
       <li class="post">
         <a href="/2012/02/13/loading-fixtures-in-django-tests/">Loading fixtures in Django tests</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/11/first-post-from-octopress/">First post from Octopress</a>
       </li>
     
   </ul>

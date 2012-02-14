@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fix | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/fix/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T13:31:02+11:00</updated>
+  <updated>2012-02-14T15:52:16+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,41 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>
+    <link href="http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/"/>
+    <updated>2012-02-14T15:30:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe</id>
+    <content type="html"><![CDATA[<p>When using Python to automate your work, threading is one thing you need to know of. I've got into a problem with threading when parsing time. To be exact: <code>datetime.datetime.strptime()</code> function was not thread-safe. Luckily, I found a solution on <a href="http://stackoverflow.com/questions/4625149/fixed-strptime-exception-with-thread-lock-but-slows-down-the-program">StackOverflow</a>.</p>
+
+<!-- more -->
+
+
+<p>This is how the problem occurred:</p>
+
+<p>``` python
+from datetime import datetime
+import threading</p>
+
+<p>def parse_time(value):</p>
+
+<pre><code># Parse time with strptime()
+datetime.strptime(value], "%Y-%m-%d %H:%M:%S.%f")
+</code></pre>
+
+<p>t = threading.Thread(target=parse_time, args=(value))
+t.start()
+```
+Fixing it was pretty straightforward. Just make a dummy call on strptime() before creating a thread:</p>
+
+<p><code>python
+datetime.strptime("2011-04-05 18:40:58.525996", "%Y-%m-%d %H:%M:%S.%f")
+t = threading.Thread(target=format_time, args=(some_values))
+t.start()
+</code></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Fatal error: Call to undefined function _make_cat_compat()]]></title>

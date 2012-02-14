@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Fix screwed up keyboard layout on Ubuntu 9.04 - geeknam's blog</title>
+  <title>Python strptime is not thread-safe - geeknam's blog</title>
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it: Kill &hellip;">
-  <meta name="keywords" content="linux, ubuntu, vnc, keyboard, fix">
+  <meta name="description" content="When using Python to automate your work, threading is one thing you need to know of. I&#8217;ve got into a problem with threading when parsing time. &hellip;">
+  <meta name="keywords" content="pythonthreadingthreadsdatetimestrptime">
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04">
+  <link rel="canonical" href="http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">Fix Screwed Up Keyboard Layout on Ubuntu 9.04</h1>
+      <h1 class="entry-title">Python Strptime Is Not Thread-safe</h1>
     
     
       <p class="meta">
@@ -96,21 +96,50 @@
   
 
 
-<time datetime="2010-12-05T13:34:00+11:00" pubdate data-updated="true">Dec 5<span>th</span>, 2010</time>
+<time datetime="2012-02-14T15:30:00+11:00" pubdate data-updated="true">Feb 14<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it:</p>
+<div class="entry-content"><p>When using Python to automate your work, threading is one thing you need to know of. I&#8217;ve got into a problem with threading when parsing time. To be exact: <code>datetime.datetime.strptime()</code> function was not thread-safe. Luckily, I found a solution on <a href="http://stackoverflow.com/questions/4625149/fixed-strptime-exception-with-thread-lock-but-slows-down-the-program">StackOverflow</a>.</p>
 
-<ol>
-<li>Kill existing vnc session: <code>vncserver -kill :1</code> (1 here is the pid)</li>
-<li>Edit with: <code>nano /root/.vnc/xstartup</code></li>
-<li>Add this line: <code>export XKL_XMODMAP_DISABLE=1</code></li>
-<li>Restart vncserver</li>
-</ol>
+<!-- more -->
+
+
+<p>This is how the problem occurred:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">threading</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Parse time with strptime()</span>
+</span><span class='line'>    <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">],</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S.</span><span class="si">%f</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">parse_time</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Fixing it was pretty straightforward. Just make a dummy call on strptime() before creating a thread:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s">&quot;2011-04-05 18:40:58.525996&quot;</span><span class="p">,</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S.</span><span class="si">%f</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">format_time</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">some_values</span><span class="p">))</span>
+</span><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
 
@@ -134,12 +163,12 @@
   
 
 
-<time datetime="2010-12-05T13:34:00+11:00" pubdate data-updated="true">Dec 5<span>th</span>, 2010</time>
+<time datetime="2012-02-14T15:30:00+11:00" pubdate data-updated="true">Feb 14<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/categories/fix/'>fix</a>, <a class='category' href='/categories/linux/'>linux</a>
+    <a class='category' href='/categories/fix/'>fix</a>, <a class='category' href='/categories/python/'>python</a>
   
 </span>
 
@@ -148,7 +177,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -161,10 +190,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2010/11/28/tonidoplug/" title="Previous Post: TonidoPlug">&laquo; TonidoPlug</a>
+        <a class="basic-alignment left" href="/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/" title="Previous Post: Regenerating Google's ClientLogin AuthToken in Django">&laquo; Regenerating Google's ClientLogin AuthToken in Django</a>
       
-      
-        <a class="basic-alignment right" href="/2010/12/25/gae-xmpphandler/" title="next Post: GAE XMPPHandler">GAE XMPPHandler &raquo;</a>
       
     </p>
   </footer>
@@ -285,8 +312,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/';
-        var disqus_url = 'http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/';
+        var disqus_identifier = 'http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/';
+        var disqus_url = 'http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/';
         var disqus_script = 'embed.js';
       
     (function () {

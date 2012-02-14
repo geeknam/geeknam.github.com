@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T13:31:02+11:00</updated>
+  <updated>2012-02-14T15:52:16+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>
+    <link href="http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/"/>
+    <updated>2012-02-14T15:30:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe</id>
+    <content type="html"><![CDATA[<p>When using Python to automate your work, threading is one thing you need to know of. I&#8217;ve got into a problem with threading when parsing time. To be exact: <code>datetime.datetime.strptime()</code> function was not thread-safe. Luckily, I found a solution on <a href="http://stackoverflow.com/questions/4625149/fixed-strptime-exception-with-thread-lock-but-slows-down-the-program">StackOverflow</a>.</p>
+
+<!-- more -->
+
+
+<p>This is how the problem occurred:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">threading</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">parse_time</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># Parse time with strptime()</span>
+</span><span class='line'>    <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">],</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S.</span><span class="si">%f</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">parse_time</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Fixing it was pretty straightforward. Just make a dummy call on strptime() before creating a thread:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s">&quot;2011-04-05 18:40:58.525996&quot;</span><span class="p">,</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S.</span><span class="si">%f</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">format_time</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">some_values</span><span class="p">))</span>
+</span><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Regenerating Google's ClientLogin AuthToken in Django]]></title>
