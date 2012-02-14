@@ -4,7 +4,7 @@
   <title><![CDATA[Category: tdd | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/tdd/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T10:38:03+11:00</updated>
+  <updated>2012-02-14T11:54:53+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -54,7 +54,7 @@ def setUp(self):
 <p>Invoking this <code>call_command</code> is equivalent to running <code>manage.py loaddata /path/to/fixtures</code>
 The test in each app can now inherit GlocalSetup and reuse setUp():
 ``` python
-from django.test import from project.tests import GlobalSetup</p>
+from project.tests import GlobalSetup</p>
 
 <p>class PoniesTest(GlobalSetup):</p>
 
