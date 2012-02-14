@@ -2,39 +2,39 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine/</loc>
-        <lastmod>2012-02-14T10:36:28+11:00</lastmod>
+        <lastmod>2012-02-14T13:07:19+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2010/11/28/tonidoplug/</loc>
-        <lastmod>2012-02-14T10:37:12+11:00</lastmod>
+        <lastmod>2012-02-14T13:07:49+11:00</lastmod>
     </url>
     <url>
         <loc>
             http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/
         </loc>
-        <lastmod>2012-02-14T10:35:37+11:00</lastmod>
+        <lastmod>2012-02-14T13:06:48+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2010/12/25/gae-xmpphandler/</loc>
-        <lastmod>2012-02-14T10:36:53+11:00</lastmod>
+        <lastmod>2012-02-14T13:07:33+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/</loc>
-        <lastmod>2012-02-14T10:36:40+11:00</lastmod>
+        <lastmod>2012-02-14T13:07:24+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2011/06/11/aliases-for-google-storage/</loc>
-        <lastmod>2012-02-14T10:34:18+11:00</lastmod>
+        <lastmod>2012-02-14T13:06:00+11:00</lastmod>
     </url>
     <url>
         <loc>
             http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/
         </loc>
-        <lastmod>2012-02-14T10:35:20+11:00</lastmod>
+        <lastmod>2012-02-14T13:06:40+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2011/11/12/fabric-deployment/</loc>
-        <lastmod>2012-02-14T10:35:04+11:00</lastmod>
+        <lastmod>2012-02-14T13:06:22+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2012/02/11/first-post-from-octopress/</loc>
@@ -42,15 +42,21 @@
     </url>
     <url>
         <loc>http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/</loc>
-        <lastmod>2012-02-14T11:43:13+11:00</lastmod>
+        <lastmod>2012-02-14T13:07:03+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms/</loc>
-        <lastmod>2012-02-14T10:34:41+11:00</lastmod>
+        <lastmod>2012-02-14T13:06:11+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/2012/02/13/more-on-django-formview/</loc>
-        <lastmod>2012-02-14T10:36:14+11:00</lastmod>
+        <lastmod>2012-02-14T13:07:08+11:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/
+        </loc>
+        <lastmod>2012-02-14T13:10:12+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/about/</loc>
@@ -58,10 +64,10 @@
     </url>
     <url>
         <loc>http://geeknam.github.com/blog/archives/</loc>
-        <lastmod>2012-02-14T11:43:13+11:00</lastmod>
+        <lastmod>2012-02-14T13:10:12+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/</loc>
-        <lastmod>2012-02-14T11:43:13+11:00</lastmod>
+        <lastmod>2012-02-14T13:10:12+11:00</lastmod>
     </url>
 </urlset>

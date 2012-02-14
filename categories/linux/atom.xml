@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/linux/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T11:54:53+11:00</updated>
+  <updated>2012-02-14T13:10:43+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,31 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Aliases for Google Storage]]></title>
+    <link href="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/"/>
+    <updated>2011-06-11T13:13:00+10:00</updated>
+    <id>http://geeknam.github.com/2011/06/11/aliases-for-google-storage</id>
+    <content type="html"><![CDATA[<p>I've just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I'm most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
+
+<p>``` bash
+function gsup(){</p>
+
+<pre><code>gsutil cp "$@" gs://bucketname.com
+</code></pre>
+
+<p>}</p>
+
+<p>function gsdown(){</p>
+
+<pre><code>gsutil cp gs://bucketname.com/"$@" ~/Desktop
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>

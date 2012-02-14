@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/python/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T11:54:53+11:00</updated>
+  <updated>2012-02-14T13:10:43+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,72 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Regenerating Google's ClientLogin AuthToken in Django]]></title>
+    <link href="http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/"/>
+    <updated>2012-02-14T12:47:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django</id>
+    <content type="html"><![CDATA[<p>If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, AuthToken generated with ClientLogin authorization expires after 2 weeks. Therefore, it's good to have a solution to auto regenerate it. First of all, create a model that stores the token and the last updated day.</p>
+
+<!-- more -->
+
+
+<p>``` python
+from django.db import models
+from datetime import datetime, timedelta</p>
+
+<p>class AuthToken(models.Model):</p>
+
+<pre><code>token = models.TextField()
+last_updated = models.DateTimeField(auto_now_add=True)
+
+def token_update(self):
+    # Check if the token's lifespan is more than n days (n=1 in this case)
+    # You can adjust n value to whatever you want
+
+    if datetime.now() - self.last_updated &gt; timedelta(days=1):
+        return True
+    return False
+</code></pre>
+
+<p>```</p>
+
+<p>Now let's write a function that regenerates AuthToken and saves it back to database.</p>
+
+<p>```python
+from models import AuthToken</p>
+
+<p>CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'</p>
+
+<p>def regenerate_authtoken():</p>
+
+<pre><code>auth_token = AuthToken.objects.all()[0]
+if auth_token.token_update():
+    data = urllib.urlencode(
+        {
+            'Email': youremail@gmail.com,
+            'Passwd': yourpassword,
+            'service': 'service_name',
+            'accountType': 'GOOGLE'
+        }
+    )
+    req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
+    resp = urllib2.urlopen(req)
+    resp_body = resp.read()
+
+    resp_dict = dict(
+        x.split('=') for x in resp_body.split('\n') if x
+    )
+    auth_token.token = resp_dict['Auth']
+    auth_token.save()
+</code></pre>
+
+<p>```</p>
+
+<p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[More on Django FormView]]></title>
@@ -247,38 +313,6 @@ Hope this will help you to DRY up your tests.</p>
 <param name="bgcolor" value="#FFFFFF" />
 <embed width="620" height="420"  src="http://www.youtube.com/v/xtmb-5WPWQs?version=3&f=user_uploads&c=google-webdrive-0&app=youtube_gdata" type="application/x-shockwave-flash"></embed></object>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[GAE XMPPHandler]]></title>
-    <link href="http://geeknam.github.com/2010/12/25/gae-xmpphandler/"/>
-    <updated>2010-12-25T15:57:00+11:00</updated>
-    <id>http://geeknam.github.com/2010/12/25/gae-xmpphandler</id>
-    <content type="html"><![CDATA[<p>Finally got time to continue developing Push Contacts. I've gotten a nerve-wrecking problem while developing with C2DM
-applications. When the app supposed to get the push message, it didn't respond to it. Looking at the logs I encountered
-an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
-of GTalk on the phone.</p>
-
-<!-- more -->
-
-
-<p>Ok now a tip related to Google App Engine development. I just added a new feature to Push Contacts which is allowing
-users to reply to the latest SMS received. I had to retrieve the email of the user the bot is chatting with to find
-which phone number to send the SMS to. Took a look at guru.appspot.com source code and decided to use
-<code>xmpp_handlers.CommandHandler</code>. Used this method <code>text_message(self, message)</code> and message.sender supposed to return the
-sender of a message but instead it returned an IM formatted string. Here is how you can retrieve the email.</p>
-
-<p>``` python
-class XMPPHandler(xmpp_handlers.CommandHandler):</p>
-
-<pre><code>def text_message(self, message):
-    idx  = message.sender.index('/')
-    user = message.sender[0:idx]
-    logging.debug(user)
-</code></pre>
-
-<p>```</p>
 ]]></content>
   </entry>
   

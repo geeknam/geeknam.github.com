@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T11:54:53+11:00</updated>
+  <updated>2012-02-14T13:10:43+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,106 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Regenerating Google's ClientLogin AuthToken in Django]]></title>
+    <link href="http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/"/>
+    <updated>2012-02-14T12:47:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django</id>
+    <content type="html"><![CDATA[<p>If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, AuthToken generated with ClientLogin authorization expires after 2 weeks. Therefore, it&#8217;s good to have a solution to auto regenerate it. First of all, create a model that stores the token and the last updated day.</p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">AuthToken</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">token</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">last_updated</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">token_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="c"># Check if the token&#39;s lifespan is more than n days (n=1 in this case)</span>
+</span><span class='line'>        <span class="c"># You can adjust n value to whatever you want</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_updated</span> <span class="o">&gt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">return</span> <span class="bp">True</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">False</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now let&#8217;s write a function that regenerates AuthToken and saves it back to database.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">AuthToken</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">CLIENT_LOGIN_URL</span> <span class="o">=</span> <span class="s">&#39;https://www.google.com/accounts/ClientLogin&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">regenerate_authtoken</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">auth_token</span> <span class="o">=</span> <span class="n">AuthToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">auth_token</span><span class="o">.</span><span class="n">token_update</span><span class="p">():</span>
+</span><span class='line'>        <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="s">&#39;Email&#39;</span><span class="p">:</span> <span class="n">youremail</span><span class="nd">@gmail.com</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&#39;Passwd&#39;</span><span class="p">:</span> <span class="n">yourpassword</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&#39;service&#39;</span><span class="p">:</span> <span class="s">&#39;service_name&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&#39;accountType&#39;</span><span class="p">:</span> <span class="s">&#39;GOOGLE&#39;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>        <span class="n">req</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">CLIENT_LOGIN_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">resp</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">resp_body</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">resp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resp_body</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>        <span class="n">auth_token</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">resp_dict</span><span class="p">[</span><span class="s">&#39;Auth&#39;</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">auth_token</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[More on Django FormView]]></title>
