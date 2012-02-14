@@ -4,7 +4,7 @@
   <title><![CDATA[Category: api | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/api/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T13:10:43+11:00</updated>
+  <updated>2012-02-14T13:14:15+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -56,8 +56,8 @@ from models import AuthToken</p>
 if auth_token.token_update():
     data = urllib.urlencode(
         {
-            'Email': youremail@gmail.com,
-            'Passwd': yourpassword,
+            'Email': 'youremail@gmail.com',
+            'Passwd': 'yourpassword',
             'service': 'service_name',
             'accountType': 'GOOGLE'
         }

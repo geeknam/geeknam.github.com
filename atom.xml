@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T13:10:43+11:00</updated>
+  <updated>2012-02-14T13:14:15+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -91,8 +91,8 @@
 </span><span class='line'>    <span class="k">if</span> <span class="n">auth_token</span><span class="o">.</span><span class="n">token_update</span><span class="p">():</span>
 </span><span class='line'>        <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span>
 </span><span class='line'>            <span class="p">{</span>
-</span><span class='line'>                <span class="s">&#39;Email&#39;</span><span class="p">:</span> <span class="n">youremail</span><span class="nd">@gmail.com</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&#39;Passwd&#39;</span><span class="p">:</span> <span class="n">yourpassword</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&#39;Email&#39;</span><span class="p">:</span> <span class="s">&#39;youremail@gmail.com&#39;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&#39;Passwd&#39;</span><span class="p">:</span> <span class="s">&#39;yourpassword&#39;</span><span class="p">,</span>
 </span><span class='line'>                <span class="s">&#39;service&#39;</span><span class="p">:</span> <span class="s">&#39;service_name&#39;</span><span class="p">,</span>
 </span><span class='line'>                <span class="s">&#39;accountType&#39;</span><span class="p">:</span> <span class="s">&#39;GOOGLE&#39;</span>
 </span><span class='line'>            <span class="p">}</span>

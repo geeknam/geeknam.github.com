@@ -56,7 +56,7 @@
         <loc>
             http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/
         </loc>
-        <lastmod>2012-02-14T13:10:12+11:00</lastmod>
+        <lastmod>2012-02-14T13:14:00+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/about/</loc>
@@ -64,10 +64,10 @@
     </url>
     <url>
         <loc>http://geeknam.github.com/blog/archives/</loc>
-        <lastmod>2012-02-14T13:10:12+11:00</lastmod>
+        <lastmod>2012-02-14T13:14:00+11:00</lastmod>
     </url>
     <url>
         <loc>http://geeknam.github.com/</loc>
-        <lastmod>2012-02-14T13:10:12+11:00</lastmod>
+        <lastmod>2012-02-14T13:14:00+11:00</lastmod>
     </url>
 </urlset>
