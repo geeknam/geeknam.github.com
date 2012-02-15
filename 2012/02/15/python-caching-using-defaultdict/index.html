@@ -176,13 +176,21 @@ to query the database anymore.</p>
 <span class='line-number'>19</span>
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">csv</span>
 </span><span class='line'><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 </span><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Pony</span><span class="p">,</span> <span class="n">PonySwag</span>
 </span><span class='line'>
 </span><span class='line'><span class="k">class</span> <span class="nc">PoniesCache</span><span class="p">(</span><span class="n">defaultdict</span><span class="p">):</span>
+</span><span class='line'>    <span class="c"># If dict lookup fails this will be called</span>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-</span><span class='line'>        <span class="k">return</span> <span class="n">Pony</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>        <span class="c"># Insert a pony in cache dict and return it</span>
+</span><span class='line'>        <span class="n">pony</span> <span class="o">=</span> <span class="n">Pony</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pony</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">pony</span>
 </span><span class='line'>
 </span><span class='line'><span class="n">ponies_cache</span> <span class="o">=</span> <span class="n">PoniesCache</span><span class="p">()</span>
 </span><span class='line'><span class="c"># Getting some data from csv file</span>
@@ -202,7 +210,7 @@ to query the database anymore.</p>
 
 <p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
 <code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
-In our case, we override <code>__missing__</code> in order to create a pony (if it doesn&#8217;t exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
+In our case, we override <code>__missing__</code> to create a pony and store it in cache (if it doesn&#8217;t exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
 </div>
 
 

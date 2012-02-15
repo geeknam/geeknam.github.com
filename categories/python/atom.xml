@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/python/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-15T11:39:55+11:00</updated>
+  <updated>2012-02-15T14:18:12+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -61,8 +61,12 @@ from models import Pony, PonySwag</p>
 
 <p>class PoniesCache(defaultdict):</p>
 
-<pre><code>def __missing__(self, key):
-    return Pony.objects.get_or_create(name=key)[0]
+<pre><code># If dict lookup fails this will be called
+def __missing__(self, key):
+    # Insert a pony in cache dict and return it
+    pony = Pony.objects.get_or_create(name=key)[0]
+    self[key] = pony
+    return pony
 </code></pre>
 
 <p>ponies_cache = PoniesCache()</p>
@@ -87,7 +91,7 @@ PonySwag.objects.get_or_create(
 
 <p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
 <code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
-In our case, we override <code>__missing__</code> in order to create a pony (if it doesn't exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
+In our case, we override <code>__missing__</code> to create a pony and store it in cache (if it doesn't exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
 ]]></content>
   </entry>
   
