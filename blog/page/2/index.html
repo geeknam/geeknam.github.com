@@ -9,8 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="Finally got time to continue developing Push Contacts. I&#8217;ve gotten a nerve-wrecking problem while developing with C2DM
-applications. When the &hellip;">
+  <meta name="description" content="Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +77,105 @@ applications. When the &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/05/08/using-php-to-parse-git-history/">Using PHP to Parse Git History</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-08T13:19:00+10:00" pubdate data-updated="true">May 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet belongs to the project I&#8217;m currently working on.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">// Author: Ngo Minh Nam</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$dir</span> <span class="o">=</span> <span class="s2">&quot;/path/to/your/repo/&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$output</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="nb">chdir</span><span class="p">(</span><span class="nv">$dir</span><span class="p">);</span>
+</span><span class='line'><span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;git log&quot;</span><span class="p">,</span><span class="nv">$output</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$history</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$output</span> <span class="k">as</span> <span class="nv">$line</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;commit&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$commit</span><span class="p">)){</span>
+</span><span class='line'>            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$history</span><span class="p">,</span> <span class="nv">$commit</span><span class="p">);</span>
+</span><span class='line'>            <span class="nb">unset</span><span class="p">(</span><span class="nv">$commit</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;hash&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;commit&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;Author&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;author&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;Author:&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="s1">&#39;Date&#39;</span><span class="p">)</span><span class="o">===</span><span class="mi">0</span><span class="p">){</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nv">$line</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="s1">&#39;Date:&#39;</span><span class="p">));</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">{</span>
+</span><span class='line'>        <span class="nv">$commit</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span>  <span class="o">.=</span> <span class="nv">$line</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$history</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -265,6 +363,10 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/02/15/python-caching-using-defaultdict/">Python caching using defaultdict</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/02/14/python-strptime-is-not-thread-safe/">Python strptime is not thread-safe</a>
       </li>
     
@@ -278,10 +380,6 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
     
       <li class="post">
         <a href="/2012/02/13/django-dynamic-unsubscribe-forms/">Django dynamic unsubscribe forms</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/13/loading-fixtures-in-django-tests/">Loading fixtures in Django tests</a>
       </li>
     
   </ul>

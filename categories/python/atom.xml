@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/python/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T15:52:16+11:00</updated>
+  <updated>2012-02-15T11:39:55+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,84 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python caching using defaultdict]]></title>
+    <link href="http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/"/>
+    <updated>2012-02-15T10:46:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict</id>
+    <content type="html"><![CDATA[<p>Today, I've learnt about <code>defaultdict</code> container from my colleague, who uses it for caching. <code>defaultdict</code> container is part of <code>collections</code> module which provides high-performance container datatypes.
+You can find more about it <a href="http://docs.python.org/library/collections.html#collections.defaultdict">here</a>. <strong>Note</strong>: New in version 2.5.</p>
+
+<!-- more -->
+
+
+<p>Let's see the code without caching mechanism:</p>
+
+<p>``` python
+import csv
+from models import Pony, PonySwag</p>
+
+<h1>Getting some data from csv file</h1>
+
+<p>swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')</p>
+
+<p>for swag in swags:</p>
+
+<pre><code># Get or create a pony
+pony = Pony.objects.get_or_create(
+    name=swag['pony_name']
+)[0]
+
+# Create pony swag which belongs to a pony
+PonySwag.objects.get_or_create(
+    name=swag['swag_name'],
+    power=swag['swag_power'],
+    pony=pony 
+)[0]
+</code></pre>
+
+<p>```</p>
+
+<p>In this scenario, for every entry in csv, the code hits the database to get a pony (based on the name) to assign it to a corresponding swag. Now if we cache the created ponies, we would not have
+to query the database anymore.</p>
+
+<p>``` python
+import csv
+from collections import defaultdict
+from models import Pony, PonySwag</p>
+
+<p>class PoniesCache(defaultdict):</p>
+
+<pre><code>def __missing__(self, key):
+    return Pony.objects.get_or_create(name=key)[0]
+</code></pre>
+
+<p>ponies_cache = PoniesCache()</p>
+
+<h1>Getting some data from csv file</h1>
+
+<p>swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')</p>
+
+<p>for swag in swags:</p>
+
+<pre><code>pony = ponies_cache[swag['pony_name']]
+
+# Create pony swag which belongs to a pony
+PonySwag.objects.get_or_create(
+    name=swag['swag_name'],
+    power=swag['swag_power'],
+    pony=pony 
+)[0]
+</code></pre>
+
+<p>```</p>
+
+<p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
+<code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
+In our case, we override <code>__missing__</code> in order to create a pony (if it doesn't exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>
@@ -274,64 +352,6 @@ else:
 </code></pre>
 
 <p>```</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Loading fixtures in Django tests]]></title>
-    <link href="http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/"/>
-    <updated>2012-02-13T14:22:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests</id>
-    <content type="html"><![CDATA[<p>When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a GlobalSetup class that other tests should inherit from (it's located at the project level). However, this approach creates a problem with loading fixtures. According to Django <a href="https://docs.djangoproject.com/en/dev/topics/testing/">docs</a>: <!-- more --></p>
-
-<p><blockquote><p>Once you've created a fixture and placed it in a fixtures directory in one of your INSTALLED_APPS, you can use it in your unit tests by specifying a fixtures class attribute on your django.test.TestCase subclass</p></blockquote></p>
-
-<p>And you would normally do this to load the fixtures:<br/>
-``` python
-from django.test import TestCase</p>
-
-<p>class PoniesTest(TestCase):</p>
-
-<pre><code>fixtures = ['ponies']
-
-def test_ponies(self):
-    call_some_test_code()
-</code></pre>
-
-<p><code>
-How should we load the fixtures now, when the test file is not at the apps level?
-Instead of creating fixures folder and placing fixtures in them (in every app), a better and neater way to handle this would be to put all fixtures in one folder at the project level and load them. You can do this with `call_command` as following:  
-</code> python
-from django.test import TestCase
-from django.core.management import call_command</p>
-
-<p>class GlobalSetup(self):</p>
-
-<pre><code># Create some ponies and snakes here
-def setUp(self):
-    # Load fixtures
-    call_command('loaddata', 'tests/ponies', verbosity=0)
-</code></pre>
-
-<p>```</p>
-
-<p>Invoking this <code>call_command</code> is equivalent to running <code>manage.py loaddata /path/to/fixtures</code>
-The test in each app can now inherit GlocalSetup and reuse setUp():
-``` python
-from project.tests import GlobalSetup</p>
-
-<p>class PoniesTest(GlobalSetup):</p>
-
-<pre><code>def setUp(self):
-    super(PoniesTest, self).setUp()
-
-def test_ponies(self):
-    call_some_test_code()
-</code></pre>
-
-<p><code>``
-You could also limit each test to load different fixtures by passing a list of fixtures name</code>['ponies', 'snakes']` to setUp().
-Hope this will help you to DRY up your tests.</p>
 ]]></content>
   </entry>
   

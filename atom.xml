@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://geeknam.github.com/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-14T15:52:16+11:00</updated>
+  <updated>2012-02-15T11:39:55+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,114 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python caching using defaultdict]]></title>
+    <link href="http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/"/>
+    <updated>2012-02-15T10:46:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict</id>
+    <content type="html"><![CDATA[<p>Today, I&#8217;ve learnt about <code>defaultdict</code> container from my colleague, who uses it for caching. <code>defaultdict</code> container is part of <code>collections</code> module which provides high-performance container datatypes.
+You can find more about it <a href="http://docs.python.org/library/collections.html#collections.defaultdict">here</a>. <strong>Note</strong>: New in version 2.5.</p>
+
+<!-- more -->
+
+
+<p>Let&#8217;s see the code without caching mechanism:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">csv</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Pony</span><span class="p">,</span> <span class="n">PonySwag</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Getting some data from csv file</span>
+</span><span class='line'><span class="n">swags</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="s">&#39;pony_swag.csv&#39;</span><span class="p">,</span> <span class="s">&#39;rU&#39;</span><span class="p">),</span> <span class="n">dialect</span><span class="o">=</span><span class="s">&#39;excel&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">swag</span> <span class="ow">in</span> <span class="n">swags</span><span class="p">:</span>
+</span><span class='line'>    <span class="c"># Get or create a pony</span>
+</span><span class='line'>    <span class="n">pony</span> <span class="o">=</span> <span class="n">Pony</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">name</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;pony_name&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Create pony swag which belongs to a pony</span>
+</span><span class='line'>    <span class="n">PonySwag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">name</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_name&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">power</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_power&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">pony</span><span class="o">=</span><span class="n">pony</span>
+</span><span class='line'>    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>In this scenario, for every entry in csv, the code hits the database to get a pony (based on the name) to assign it to a corresponding swag. Now if we cache the created ponies, we would not have
+to query the database anymore.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">csv</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Pony</span><span class="p">,</span> <span class="n">PonySwag</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">PoniesCache</span><span class="p">(</span><span class="n">defaultdict</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">Pony</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ponies_cache</span> <span class="o">=</span> <span class="n">PoniesCache</span><span class="p">()</span>
+</span><span class='line'><span class="c"># Getting some data from csv file</span>
+</span><span class='line'><span class="n">swags</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="s">&#39;pony_swag.csv&#39;</span><span class="p">,</span> <span class="s">&#39;rU&#39;</span><span class="p">),</span> <span class="n">dialect</span><span class="o">=</span><span class="s">&#39;excel&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">swag</span> <span class="ow">in</span> <span class="n">swags</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">pony</span> <span class="o">=</span> <span class="n">ponies_cache</span><span class="p">[</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;pony_name&#39;</span><span class="p">]]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Create pony swag which belongs to a pony</span>
+</span><span class='line'>    <span class="n">PonySwag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">name</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_name&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">power</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_power&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">pony</span><span class="o">=</span><span class="n">pony</span>
+</span><span class='line'>    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
+<code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
+In our case, we override <code>__missing__</code> in order to create a pony (if it doesn&#8217;t exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>

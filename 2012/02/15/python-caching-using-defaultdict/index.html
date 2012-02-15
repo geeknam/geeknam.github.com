@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Regenerating Google's ClientLogin AuthToken in Django - geeknam's blog</title>
+  <title>Python caching using defaultdict - geeknam's blog</title>
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, &hellip;">
-  <meta name="keywords" content="googleapiclientloginauthtokenpythondjango">
+  <meta name="description" content="Today, I&#8217;ve learnt about defaultdict container from my colleague, who uses it for caching. defaultdict container is part of collections module &hellip;">
+  <meta name="keywords" content="djangopythoncachecachingdefaultdictcollectionsoptimization">
 
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django">
+  <link rel="canonical" href="http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">Regenerating Google's ClientLogin AuthToken in Django</h1>
+      <h1 class="entry-title">Python Caching Using Defaultdict</h1>
     
     
       <p class="meta">
@@ -96,19 +96,20 @@
   
 
 
-<time datetime="2012-02-14T12:47:00+11:00" pubdate data-updated="true">Feb 14<span>th</span>, 2012</time>
+<time datetime="2012-02-15T10:46:00+11:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, AuthToken generated with ClientLogin authorization expires after 2 weeks. Therefore, it&#8217;s good to have a solution to auto regenerate it. First of all, create a model that stores the token and the last updated day.</p>
+<div class="entry-content"><p>Today, I&#8217;ve learnt about <code>defaultdict</code> container from my colleague, who uses it for caching. <code>defaultdict</code> container is part of <code>collections</code> module which provides high-performance container datatypes.
+You can find more about it <a href="http://docs.python.org/library/collections.html#collections.defaultdict">here</a>. <strong>Note</strong>: New in version 2.5.</p>
 
 <!-- more -->
 
 
-
+<p>Let&#8217;s see the code without caching mechanism:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -124,24 +125,35 @@
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">csv</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Pony</span><span class="p">,</span> <span class="n">PonySwag</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">AuthToken</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">token</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">last_updated</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'><span class="c"># Getting some data from csv file</span>
+</span><span class='line'><span class="n">swags</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="s">&#39;pony_swag.csv&#39;</span><span class="p">,</span> <span class="s">&#39;rU&#39;</span><span class="p">),</span> <span class="n">dialect</span><span class="o">=</span><span class="s">&#39;excel&#39;</span><span class="p">)</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">token_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>        <span class="c"># Check if the token&#39;s lifespan is more than n days (n=1 in this case)</span>
-</span><span class='line'>        <span class="c"># You can adjust n value to whatever you want</span>
+</span><span class='line'><span class="k">for</span> <span class="n">swag</span> <span class="ow">in</span> <span class="n">swags</span><span class="p">:</span>
+</span><span class='line'>    <span class="c"># Get or create a pony</span>
+</span><span class='line'>    <span class="n">pony</span> <span class="o">=</span> <span class="n">Pony</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">name</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;pony_name&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </span><span class='line'>
-</span><span class='line'>        <span class="k">if</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_updated</span> <span class="o">&gt;</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-</span><span class='line'>            <span class="k">return</span> <span class="bp">True</span>
-</span><span class='line'>        <span class="k">return</span> <span class="bp">False</span>
+</span><span class='line'>    <span class="c"># Create pony swag which belongs to a pony</span>
+</span><span class='line'>    <span class="n">PonySwag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">name</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_name&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">power</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_power&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">pony</span><span class="o">=</span><span class="n">pony</span>
+</span><span class='line'>    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now let&#8217;s write a function that regenerates AuthToken and saves it back to database.</p>
+<p></p>
+
+<p>In this scenario, for every entry in csv, the code hits the database to get a pony (based on the name) to assign it to a corresponding swag. Now if we cache the created ponies, we would not have
+to query the database anymore.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -164,37 +176,33 @@
 <span class='line-number'>19</span>
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">AuthToken</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">csv</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Pony</span><span class="p">,</span> <span class="n">PonySwag</span>
 </span><span class='line'>
-</span><span class='line'><span class="n">CLIENT_LOGIN_URL</span> <span class="o">=</span> <span class="s">&#39;https://www.google.com/accounts/ClientLogin&#39;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">PoniesCache</span><span class="p">(</span><span class="n">defaultdict</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">Pony</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">key</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">def</span> <span class="nf">regenerate_authtoken</span><span class="p">():</span>
-</span><span class='line'>    <span class="n">auth_token</span> <span class="o">=</span> <span class="n">AuthToken</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">auth_token</span><span class="o">.</span><span class="n">token_update</span><span class="p">():</span>
-</span><span class='line'>        <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span>
-</span><span class='line'>            <span class="p">{</span>
-</span><span class='line'>                <span class="s">&#39;Email&#39;</span><span class="p">:</span> <span class="s">&#39;youremail@gmail.com&#39;</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&#39;Passwd&#39;</span><span class="p">:</span> <span class="s">&#39;yourpassword&#39;</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&#39;service&#39;</span><span class="p">:</span> <span class="s">&#39;service_name&#39;</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&#39;accountType&#39;</span><span class="p">:</span> <span class="s">&#39;GOOGLE&#39;</span>
-</span><span class='line'>            <span class="p">}</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>        <span class="n">req</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">CLIENT_LOGIN_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">resp</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">resp_body</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span class='line'><span class="n">ponies_cache</span> <span class="o">=</span> <span class="n">PoniesCache</span><span class="p">()</span>
+</span><span class='line'><span class="c"># Getting some data from csv file</span>
+</span><span class='line'><span class="n">swags</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="s">&#39;pony_swag.csv&#39;</span><span class="p">,</span> <span class="s">&#39;rU&#39;</span><span class="p">),</span> <span class="n">dialect</span><span class="o">=</span><span class="s">&#39;excel&#39;</span><span class="p">)</span>
 </span><span class='line'>
-</span><span class='line'>        <span class="n">resp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-</span><span class='line'>            <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">resp_body</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>        <span class="n">auth_token</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">resp_dict</span><span class="p">[</span><span class="s">&#39;Auth&#39;</span><span class="p">]</span>
-</span><span class='line'>        <span class="n">auth_token</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span><span class='line'><span class="k">for</span> <span class="n">swag</span> <span class="ow">in</span> <span class="n">swags</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">pony</span> <span class="o">=</span> <span class="n">ponies_cache</span><span class="p">[</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;pony_name&#39;</span><span class="p">]]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Create pony swag which belongs to a pony</span>
+</span><span class='line'>    <span class="n">PonySwag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get_or_create</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">name</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_name&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">power</span><span class="o">=</span><span class="n">swag</span><span class="p">[</span><span class="s">&#39;swag_power&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">pony</span><span class="o">=</span><span class="n">pony</span>
+</span><span class='line'>    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
+<p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
+<code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
+In our case, we override <code>__missing__</code> in order to create a pony (if it doesn&#8217;t exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
 </div>
 
 
@@ -217,12 +225,12 @@
   
 
 
-<time datetime="2012-02-14T12:47:00+11:00" pubdate data-updated="true">Feb 14<span>th</span>, 2012</time>
+<time datetime="2012-02-15T10:46:00+11:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/categories/api/'>api</a>, <a class='category' href='/categories/django/'>django</a>, <a class='category' href='/categories/google/'>google</a>, <a class='category' href='/categories/python/'>python</a>
+    <a class='category' href='/categories/django/'>django</a>, <a class='category' href='/categories/python/'>python</a>
   
 </span>
 
@@ -231,7 +239,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/" data-via="ngominhnam" data-counturl="http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -244,10 +252,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2012/02/13/more-on-django-formview/" title="Previous Post: More on Django FormView">&laquo; More on Django FormView</a>
+        <a class="basic-alignment left" href="/2012/02/14/python-strptime-is-not-thread-safe/" title="Previous Post: Python strptime is not thread-safe">&laquo; Python strptime is not thread-safe</a>
       
-      
-        <a class="basic-alignment right" href="/2012/02/14/python-strptime-is-not-thread-safe/" title="next Post: Python strptime is not thread-safe">Python strptime is not thread-safe &raquo;</a>
       
     </p>
   </footer>
@@ -368,8 +374,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/';
-        var disqus_url = 'http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/';
+        var disqus_identifier = 'http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/';
+        var disqus_url = 'http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/';
         var disqus_script = 'embed.js';
       
     (function () {
