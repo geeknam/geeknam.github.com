@@ -9,7 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet &hellip;">
+  <meta name="description" content="I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,59 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/06/11/aliases-for-google-storage/">Aliases for Google Storage</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-11T13:13:00+10:00" pubdate data-updated="true">Jun 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">function </span>gsup<span class="o">(){</span>
+</span><span class='line'>    gsutil cp <span class="s2">&quot;$@&quot;</span> gs://bucketname.com
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function </span>gsdown<span class="o">(){</span>
+</span><span class='line'>    gsutil cp gs://bucketname.com/<span class="s2">&quot;$@&quot;</span> ~/Desktop
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -363,6 +416,10 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/02/16/python-class-factory/">Python class factory</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/02/15/python-caching-using-defaultdict/">Python caching using defaultdict</a>
       </li>
     
@@ -376,10 +433,6 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
     
       <li class="post">
         <a href="/2012/02/13/more-on-django-formview/">More on Django FormView</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/13/django-dynamic-unsubscribe-forms/">Django dynamic unsubscribe forms</a>
       </li>
     
   </ul>

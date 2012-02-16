@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://geeknam.github.com/categories/python/atom.xml" rel="self"/>
   <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-15T14:18:12+11:00</updated>
+  <updated>2012-02-16T13:17:42+11:00</updated>
   <id>http://geeknam.github.com/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,76 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python class factory]]></title>
+    <link href="http://geeknam.github.com/2012/02/16/python-class-factory/"/>
+    <updated>2012-02-16T12:05:00+11:00</updated>
+    <id>http://geeknam.github.com/2012/02/16/python-class-factory</id>
+    <content type="html"><![CDATA[<p>Today's post will be on factory design pattern in Python. You can read more about it in <a href="http://en.wikipedia.org/wiki/Factory_method_pattern">Wiki</a>.
+This design pattern allows you to create objects without specifying the exact class of object that will be created. Let's say, you want to create an object based on a provided string.</p>
+
+<p>Here are some classes. Both of them are pets. We want to dynamically create a pet from one of those classes based on a string.</p>
+
+<!-- more -->
+
+
+<p>``` python
+class Pony(object):</p>
+
+<pre><code>def __init__(self, name):
+    self.name = name
+    self.hp = 100
+
+def magic_power(self):
+    # Attack opponent with super powers
+    pass
+
+def heal(self):
+    # Increase hp (health point)
+    pass
+</code></pre>
+
+<p>class Snake(object):</p>
+
+<pre><code># Blah blah same as Pony
+pass
+</code></pre>
+
+<p>```</p>
+
+<p>Let's write a factory method to make this happen:</p>
+
+<p>``` python
+def create_class(pet_class_name):</p>
+
+<pre><code># pet_class_name decides what class will be returned
+if pet_class_name is 'pony':
+    class InheritedClass(Pony):
+        # You can add additional methods or attributes if needed
+        pass
+    return InheritedClass
+elif pet_class_name is 'snake':
+    # Or you can return the exact class
+    return Snake
+</code></pre>
+
+<h1>Create MyPet from a string</h1>
+
+<p>MyPet = create_class('pony')</p>
+
+<h1>MyPet is now a subclass of Pony</h1>
+
+<h1>It inherits everything from Pony</h1>
+
+<p>django = MyPet('django')</p>
+
+<h1>Kaboom !!!</h1>
+
+<p>django.magic_power()
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python caching using defaultdict]]></title>
@@ -261,101 +331,6 @@ def form_invalid(self, form):
 <p>email_preferences = EmailPreferenceView.as_view()
 ```
 </span></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Django dynamic unsubscribe forms]]></title>
-    <link href="http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms/"/>
-    <updated>2012-02-13T15:40:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms</id>
-    <content type="html"><![CDATA[<p>The normal usecase of Django forms is to have predefined fields in forms like this:</p>
-
-<p>``` python
-from django import forms</p>
-
-<p>class EmailPreferenceForm(forms.Form):</p>
-
-<pre><code>daily_digest = forms.BooleanField(required=False)
-weekly_news = forms.BooleanField(required=False)
-monthly_summary = forms.BooleanField(required=False)
-</code></pre>
-
-<p>```</p>
-
-<p>What if we wanted to add more fields to the form like <code>weekly_digest</code> and so on? Well, of course you would have to add a new field to the form and maybe handle extra work in your views. Let's make this more dynamic.</p>
-
-<!-- more -->
-
-
-<p>Let's create Event model which will store all events. Entries from this model will be generated into fields in the form later:</p>
-
-<p>``` python
-from django.db import models</p>
-
-<p>class Event(models.Model):</p>
-
-<pre><code>title = models.CharField(
-    max_length=100,
-    help_text='e.g: Weekly News'
-)
-title_id = models.CharField(
-    max_length=100,
-    blank=True,
-    editable=False
-)
-
-def __unicode__(self):
-    return self.title
-
-def save(self, *args, **kwargs):
-    if not self.title_id:
-        # Generate title_id based on title
-        # Weekly News &gt; weekly_news
-        self.title_id = self.title.lower().replace(' ', '_').replace("'", '')
-</code></pre>
-
-<p>```</p>
-
-<p>And now the form that will generate fields based on all entries in Event model</p>
-
-<p>``` python
-from django import forms
-from models import Event</p>
-
-<p>class EmailPreferenceForm(forms.Form):</p>
-
-<pre><code># Auto generate fields based on title_id in Event
-def __init__(self, *args, **kwargs):
-    super(EmailPreferenceForm, self).__init__(*args, **kwargs)
-    fields = Event.objects.all()
-    for f in fields:
-        self.fields[f.title_id] = forms.BooleanField(required=False)
-</code></pre>
-
-<p>```</p>
-
-<p>Let's say you have a Subscriber model that has many Events. This piece of code will initialize the checkboxes based on subscribers' preferences.</p>
-
-<p>``` python
-from forms import EmailPreferenceForm</p>
-
-<p>def email_preferences(request):</p>
-
-<pre><code>if request.method == 'POST':
-    email_preferences = EmailPreferenceForm(request.POST)
-    # Process the form
-else:
-    # Initialize the preferences. This will make the boxes checked.
-    initial = {}
-    for e in subscriber.events.all():
-        initial[e.title_id] = True
-    email_preferences = EmailPreferenceForm(initial=initial)
-
-# Context and HTTPResponses here
-</code></pre>
-
-<p>```</p>
 ]]></content>
   </entry>
   
