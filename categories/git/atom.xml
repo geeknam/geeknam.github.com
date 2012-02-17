@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: git | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/git/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/git/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using PHP to parse git history]]></title>
-    <link href="http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/"/>
+    <link href="http://blog.namis.me/2011/05/08/using-php-to-parse-git-history/"/>
     <updated>2011-05-08T13:19:00+10:00</updated>
-    <id>http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history</id>
+    <id>http://blog.namis.me/2011/05/08/using-php-to-parse-git-history</id>
     <content type="html"><![CDATA[<p>Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet belongs to the project I'm currently working on.</p>
 
 <p>``` php

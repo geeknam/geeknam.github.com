@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: blog | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/blog/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/blog/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[First post from Octopress]]></title>
-    <link href="http://geeknam.github.com/2012/02/11/first-post-from-octopress/"/>
+    <link href="http://blog.namis.me/2012/02/11/first-post-from-octopress/"/>
     <updated>2012-02-11T21:42:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/11/first-post-from-octopress</id>
+    <id>http://blog.namis.me/2012/02/11/first-post-from-octopress</id>
     <content type="html"><![CDATA[<p>Hey there! This is my new blog powered by <a href="http://octopress.org/">Octropress</a> and hosted on Github.
 Octopress was exactly what I was looking for in a blog engine
 (Yes, code snippets should be built out of the box in a blog).

@@ -1,85 +1,85 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine/</loc>
+        <loc>http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine/</loc>
         <lastmod>2012-02-17T12:39:37+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2010/11/28/tonidoplug/</loc>
+        <loc>http://blog.namis.me/2010/11/28/tonidoplug/</loc>
         <lastmod>2012-02-17T12:40:46+11:00</lastmod>
     </url>
     <url>
         <loc>
-            http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/
+            http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/
         </loc>
         <lastmod>2012-02-17T12:38:19+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2010/12/25/gae-xmpphandler/</loc>
+        <loc>http://blog.namis.me/2010/12/25/gae-xmpphandler/</loc>
         <lastmod>2012-02-17T12:47:59+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2011/05/08/using-php-to-parse-git-history/</loc>
+        <loc>http://blog.namis.me/2011/05/08/using-php-to-parse-git-history/</loc>
         <lastmod>2012-02-17T12:46:42+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2011/06/11/aliases-for-google-storage/</loc>
+        <loc>http://blog.namis.me/2011/06/11/aliases-for-google-storage/</loc>
         <lastmod>2012-02-17T12:36:43+11:00</lastmod>
     </url>
     <url>
         <loc>
-            http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/
+            http://blog.namis.me/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/
         </loc>
         <lastmod>2012-02-17T12:37:46+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2011/11/12/fabric-deployment/</loc>
+        <loc>http://blog.namis.me/2011/11/12/fabric-deployment/</loc>
         <lastmod>2012-02-17T12:47:09+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/11/first-post-from-octopress/</loc>
+        <loc>http://blog.namis.me/2012/02/11/first-post-from-octopress/</loc>
         <lastmod>2012-02-14T10:34:05+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/</loc>
+        <loc>http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests/</loc>
         <lastmod>2012-02-17T12:38:48+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms/</loc>
+        <loc>http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms/</loc>
         <lastmod>2012-02-17T12:37:13+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/13/more-on-django-formview/</loc>
+        <loc>http://blog.namis.me/2012/02/13/more-on-django-formview/</loc>
         <lastmod>2012-02-17T12:39:13+11:00</lastmod>
     </url>
     <url>
         <loc>
-            http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/
+            http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/
         </loc>
         <lastmod>2012-02-17T12:45:43+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/</loc>
+        <loc>http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe/</loc>
         <lastmod>2012-02-17T12:39:57+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/</loc>
+        <loc>http://blog.namis.me/2012/02/15/python-caching-using-defaultdict/</loc>
         <lastmod>2012-02-17T12:45:53+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/2012/02/16/python-class-factory/</loc>
+        <loc>http://blog.namis.me/2012/02/16/python-class-factory/</loc>
         <lastmod>2012-02-17T12:48:10+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/about/</loc>
+        <loc>http://blog.namis.me/about/</loc>
         <lastmod>2012-02-14T13:18:29+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/blog/archives/</loc>
+        <loc>http://blog.namis.me/blog/archives/</loc>
         <lastmod>2012-02-17T12:48:10+11:00</lastmod>
     </url>
     <url>
-        <loc>http://geeknam.github.com/</loc>
+        <loc>http://blog.namis.me/</loc>
         <lastmod>2012-02-17T12:48:10+11:00</lastmod>
     </url>
 </urlset>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: django | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/django/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Python caching using defaultdict]]></title>
-    <link href="http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict/"/>
+    <link href="http://blog.namis.me/2012/02/15/python-caching-using-defaultdict/"/>
     <updated>2012-02-15T10:46:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/15/python-caching-using-defaultdict</id>
+    <id>http://blog.namis.me/2012/02/15/python-caching-using-defaultdict</id>
     <content type="html"><![CDATA[<p>Today, I've learnt about <code>defaultdict</code> container from my colleague, who uses it for caching. <code>defaultdict</code> container is part of <code>collections</code> module which provides high-performance container datatypes.
 You can find more about it <a href="http://docs.python.org/library/collections.html#collections.defaultdict">here</a>. <strong>Note</strong>: New in version 2.5.</p>
 
@@ -97,9 +97,9 @@ In our case, we override <code>__missing__</code> to create a pony and store it 
   
   <entry>
     <title type="html"><![CDATA[Regenerating Google's ClientLogin AuthToken in Django]]></title>
-    <link href="http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/"/>
+    <link href="http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/"/>
     <updated>2012-02-14T12:47:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django</id>
+    <id>http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django</id>
     <content type="html"><![CDATA[<p>If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, AuthToken generated with ClientLogin authorization expires after 2 weeks. Therefore, it's good to have a solution to auto regenerate it. First of all, create a model that stores the token and the last updated day.</p>
 
 <!-- more -->
@@ -163,9 +163,9 @@ if auth_token.token_update():
   
   <entry>
     <title type="html"><![CDATA[More on Django FormView]]></title>
-    <link href="http://geeknam.github.com/2012/02/13/more-on-django-formview/"/>
+    <link href="http://blog.namis.me/2012/02/13/more-on-django-formview/"/>
     <updated>2012-02-13T21:49:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/13/more-on-django-formview</id>
+    <id>http://blog.namis.me/2012/02/13/more-on-django-formview</id>
     <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Django’s generic views were developed to take away the monotony of repeating certain patterns again and again'>
 I've been trying to limit myself to use class based generic views as much as possible. Django’s generic views were developed to take away the monotony of repeating certain patterns again and again. Some generics views are properly documented (like ListView and DetailView), however I wanted to make use of FormView to process my forms. Unfortunately, there were no FormView examples provided. So here it is.</p>
 
@@ -231,9 +231,9 @@ def form_invalid(self, form):
   
   <entry>
     <title type="html"><![CDATA[Django dynamic unsubscribe forms]]></title>
-    <link href="http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms/"/>
+    <link href="http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms/"/>
     <updated>2012-02-13T15:40:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/13/django-dynamic-unsubscribe-forms</id>
+    <id>http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms</id>
     <content type="html"><![CDATA[<p>The normal usecase of Django forms is to have predefined fields in forms like this:</p>
 
 <p>``` python
@@ -326,9 +326,9 @@ else:
   
   <entry>
     <title type="html"><![CDATA[Loading fixtures in Django tests]]></title>
-    <link href="http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests/"/>
+    <link href="http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests/"/>
     <updated>2012-02-13T14:22:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/13/loading-fixtures-in-django-tests</id>
+    <id>http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests</id>
     <content type="html"><![CDATA[<p>When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a GlobalSetup class that other tests should inherit from (it's located at the project level). However, this approach creates a problem with loading fixtures. According to Django <a href="https://docs.djangoproject.com/en/dev/topics/testing/">docs</a>: <!-- more --></p>
 
 <p><blockquote><p>Once you've created a fixture and placed it in a fixtures directory in one of your INSTALLED_APPS, you can use it in your unit tests by specifying a fixtures class attribute on your django.test.TestCase subclass</p></blockquote></p>

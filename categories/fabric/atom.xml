@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: fabric | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/fabric/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/fabric/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Fabric deployment]]></title>
-    <link href="http://geeknam.github.com/2011/11/12/fabric-deployment/"/>
+    <link href="http://blog.namis.me/2011/11/12/fabric-deployment/"/>
     <updated>2011-11-12T13:28:00+11:00</updated>
-    <id>http://geeknam.github.com/2011/11/12/fabric-deployment</id>
+    <id>http://blog.namis.me/2011/11/12/fabric-deployment</id>
     <content type="html"><![CDATA[<p>Having played with Capistrano before, I suddenly had an urge to find its Pythonic alternative. After few google searches, I stumbled upon Fabric. It's basically a "python library and command-line tool for streamlining the use of SSH for application deployment or systems administration tasks". Spent few minutes trying to write functions to deploy Django applications to my Linux server and I have to say, Fabric's API is really easy to use, very customizable (it's as easy as wrapping up your shell commands in a python function) and more importantly it has Django integration which I'm gonna need the most. Having said all these, here's the video demo I recorded while messing around with Fabric, enjoy:</p>
 
 <p>P/S: django-nose, nosegrowl2 and tdaemon were used in order to show notification of testing results (just FYI)</p>

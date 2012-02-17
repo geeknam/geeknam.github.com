@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: fix | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/fix/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/fix/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>
-    <link href="http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe/"/>
+    <link href="http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe/"/>
     <updated>2012-02-14T15:30:00+11:00</updated>
-    <id>http://geeknam.github.com/2012/02/14/python-strptime-is-not-thread-safe</id>
+    <id>http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe</id>
     <content type="html"><![CDATA[<p>When using Python to automate your work, threading is one thing you need to know of. I've got into a problem with threading when parsing time. To be exact: <code>datetime.datetime.strptime()</code> function was not thread-safe. Luckily, I found a solution on <a href="http://stackoverflow.com/questions/4625149/fixed-strptime-exception-with-thread-lock-but-slows-down-the-program">StackOverflow</a>.</p>
 
 <!-- more -->
@@ -50,9 +50,9 @@ t.start()
   
   <entry>
     <title type="html"><![CDATA[Fatal error: Call to undefined function _make_cat_compat()]]></title>
-    <link href="http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/"/>
+    <link href="http://blog.namis.me/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/"/>
     <updated>2011-11-05T13:23:00+11:00</updated>
-    <id>http://geeknam.github.com/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat</id>
+    <id>http://blog.namis.me/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat</id>
     <content type="html"><![CDATA[<p>If you have the following error after uploading your WordPress, and re-uploading <code>category-template.php</code> didn't work, you could try pasting this function at the of the file.</p>
 
 <p>``` php
@@ -87,9 +87,9 @@ elseif ( is_array( $category ) &amp;&amp; isset( $category['term_id'] ) ) {
   
   <entry>
     <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>
-    <link href="http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
+    <link href="http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
     <updated>2010-12-05T13:34:00+11:00</updated>
-    <id>http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
+    <id>http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
     <content type="html"><![CDATA[<p>Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it:</p>
 
 <ol>

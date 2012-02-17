@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: linux | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/linux/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/linux/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Aliases for Google Storage]]></title>
-    <link href="http://geeknam.github.com/2011/06/11/aliases-for-google-storage/"/>
+    <link href="http://blog.namis.me/2011/06/11/aliases-for-google-storage/"/>
     <updated>2011-06-11T13:13:00+10:00</updated>
-    <id>http://geeknam.github.com/2011/06/11/aliases-for-google-storage</id>
+    <id>http://blog.namis.me/2011/06/11/aliases-for-google-storage</id>
     <content type="html"><![CDATA[<p>I've just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I'm most of my time on Terminal. Here are two aliases I use with gsutil in my <code>.bash_profile</code>. Of course, remember to replace your bucket name</p>
 
 <p>``` bash
@@ -40,9 +40,9 @@ function gsup(){</p>
   
   <entry>
     <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>
-    <link href="http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
+    <link href="http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
     <updated>2010-12-05T13:34:00+11:00</updated>
-    <id>http://geeknam.github.com/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
+    <id>http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
     <content type="html"><![CDATA[<p>Got Gnome desktop installed on TonidoPlug but when trying to vnc to it I realised the keyboard layout is messed up. This is how you fix it:</p>
 
 <ol>
@@ -57,9 +57,9 @@ function gsup(){</p>
   
   <entry>
     <title type="html"><![CDATA[TonidoPlug]]></title>
-    <link href="http://geeknam.github.com/2010/11/28/tonidoplug/"/>
+    <link href="http://blog.namis.me/2010/11/28/tonidoplug/"/>
     <updated>2010-11-28T15:19:00+11:00</updated>
-    <id>http://geeknam.github.com/2010/11/28/tonidoplug</id>
+    <id>http://blog.namis.me/2010/11/28/tonidoplug</id>
     <content type="html"><![CDATA[<p>Yes, <a href="http://tonidoplug.com" title="TonidoPlug">TonidoPlug</a> is a new toy that I've gotten last week. It is a basically a plug computer that can act likea home server. The hardware specs are the same as SheevaPlug with 1.2GHz ARM and 512MB RAM and 512MB Flash. The best thing
 about it is the energy consumption ranging from 5-10 Watts.</p>
 

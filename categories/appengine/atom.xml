@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: appengine | geeknam's blog]]></title>
-  <link href="http://geeknam.github.com/categories/appengine/atom.xml" rel="self"/>
-  <link href="http://geeknam.github.com/"/>
-  <updated>2012-02-17T12:48:18+11:00</updated>
-  <id>http://geeknam.github.com/</id>
+  <link href="http://blog.namis.me/categories/appengine/atom.xml" rel="self"/>
+  <link href="http://blog.namis.me/"/>
+  <updated>2012-02-17T12:49:43+11:00</updated>
+  <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[GAE XMPPHandler]]></title>
-    <link href="http://geeknam.github.com/2010/12/25/gae-xmpphandler/"/>
+    <link href="http://blog.namis.me/2010/12/25/gae-xmpphandler/"/>
     <updated>2010-12-25T15:57:00+11:00</updated>
-    <id>http://geeknam.github.com/2010/12/25/gae-xmpphandler</id>
+    <id>http://blog.namis.me/2010/12/25/gae-xmpphandler</id>
     <content type="html"><![CDATA[<p>Finally got time to continue developing Push Contacts. I've gotten a nerve-wrecking problem while developing with C2DM
 applications. When the app supposed to get the push message, it didn't respond to it. Looking at the logs I encountered
 an error stack related to GTalk (with TalkProvider tag). Decided to google the problem and the solution was to sign out
@@ -47,9 +47,9 @@ class XMPPHandler(xmpp_handlers.CommandHandler):</p>
   
   <entry>
     <title type="html"><![CDATA[Simple web service with Google App Engine]]></title>
-    <link href="http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine/"/>
+    <link href="http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine/"/>
     <updated>2010-06-13T13:44:00+10:00</updated>
-    <id>http://geeknam.github.com/2010/06/13/simple-web-service-with-google-app-engine</id>
+    <id>http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine</id>
     <content type="html"><![CDATA[<p>It's been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I'm pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
 
 <!-- more -->
