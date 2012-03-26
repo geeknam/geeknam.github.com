@@ -110,110 +110,12 @@
 As you know Django&#8217;s <code>forms.EmailField()</code> is capable of validating email addresses but what if you wanted to validate the existence of a particular email address? I&#8217;ve found a pretty neat solution for that, it&#8217;s called <a href="http://emailpie.com/">Email Pie</a>.
 Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We&#8217;ll let you know if that email address is legit or not.. You could either use the service hosted on emailpie.com or run your own instance (it&#8217;s open source). In this post, I&#8217;m going to show you how to write a custom form field that makes use of Email Pie.</p>
 
-<p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
-
-<figure class='code'><figcaption><span>fields.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">requests</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">simplejson</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ValidationError</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="n">EMAIL_PIE_HOST</span> <span class="o">=</span> <span class="s">&#39;http://emailpie.com&#39;</span>  <span class="c"># change this if you run your own instance</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">def</span> <span class="nf">validate_email_pie</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;email&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
-</span><span class='line'>    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">/v1/check&#39;</span> <span class="o">%</span> <span class="n">EMAIL_PIE_HOST</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">response</span> <span class="o">=</span> <span class="n">simplejson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s">&#39;success&#39;</span><span class="p">]:</span>
-</span><span class='line'>        <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s">&#39;errors&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;message&#39;</span><span class="p">])</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">EmailPieField</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">EmailField</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">default_validators</span> <span class="o">=</span> <span class="p">[</span><span class="n">validate_email_pie</span><span class="p">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><code>validate_email_pie</code> method makes GET request to Email Pie and gets back a response. The service checks for email format and mx records, it also catches misspellings (you can get it with <code>response['didyoumean']</code>). <code>validate_email_pie</code> raises <code>ValidationError</code> if the service detects an invalid email address. Now in your forms you can use <code>EmailPieField</code> like this:</p>
-
-<figure class='code'><figcaption><span>forms.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">EmailPieField</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">ContactForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">name</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">email</span> <span class="o">=</span> <span class="n">EmailPieField</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>For those interested, here are some tests for the field :)</p>
-
-<figure class='code'><figcaption><span>tests.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ValidationError</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">.fields</span> <span class="kn">import</span> <span class="n">EmailPieField</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">EmailPieFieldTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">test_invalid_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>        <span class="n">email_field</span> <span class="o">=</span> <span class="n">EmailPieField</span><span class="p">()</span>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">,</span> <span class="n">email_field</span><span class="o">.</span><span class="n">clean</span><span class="p">,</span> <span class="s">&#39;email@totest&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">test_invalid_mx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>        <span class="n">email_field</span> <span class="o">=</span> <span class="n">EmailPieField</span><span class="p">()</span>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">,</span> <span class="n">email_field</span><span class="o">.</span><span class="n">clean</span><span class="p">,</span> <span class="s">&#39;email@totest.com&#39;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">test_valid_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>        <span class="n">email_field</span> <span class="o">=</span> <span class="n">EmailPieField</span><span class="p">()</span>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">email_field</span><span class="o">.</span><span class="n">clean</span><span class="p">(</span><span class="s">&#39;nam@namis.me&#39;</span><span class="p">),</span> <span class="s">&#39;nam@namis.me&#39;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></span></p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/2012/03/27/django-custom-email-form-field-for-email-pie/">Read more &rarr;</a>
+    </footer>
   
 
 

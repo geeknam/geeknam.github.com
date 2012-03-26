@@ -4,7 +4,7 @@
   <title><![CDATA[Category: django | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-03-27T01:56:04+11:00</updated>
+  <updated>2012-03-27T02:01:24+11:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -21,6 +21,9 @@
     <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We&#8217;ll let you know if that email address is legit or not.'>
 As you know Django's <code>forms.EmailField()</code> is capable of validating email addresses but what if you wanted to validate the existence of a particular email address? I've found a pretty neat solution for that, it's called <a href="http://emailpie.com/">Email Pie</a>.
 Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We'll let you know if that email address is legit or not.. You could either use the service hosted on emailpie.com or run your own instance (it's open source). In this post, I'm going to show you how to write a custom form field that makes use of Email Pie.</p>
+
+<!-- more -->
+
 
 <p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
 

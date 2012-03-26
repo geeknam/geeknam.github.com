@@ -107,6 +107,9 @@
 As you know Django&#8217;s <code>forms.EmailField()</code> is capable of validating email addresses but what if you wanted to validate the existence of a particular email address? I&#8217;ve found a pretty neat solution for that, it&#8217;s called <a href="http://emailpie.com/">Email Pie</a>.
 Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We&#8217;ll let you know if that email address is legit or not.. You could either use the service hosted on emailpie.com or run your own instance (it&#8217;s open source). In this post, I&#8217;m going to show you how to write a custom form field that makes use of Email Pie.</p>
 
+<!-- more -->
+
+
 <p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
 
 <figure class='code'><figcaption><span>fields.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
