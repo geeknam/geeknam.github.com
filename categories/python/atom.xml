@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/python/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-02-17T12:49:43+11:00</updated>
+  <updated>2012-03-27T01:56:04+11:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,83 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Django custom email form field for Email Pie]]></title>
+    <link href="http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie/"/>
+    <updated>2012-03-27T01:14:00+11:00</updated>
+    <id>http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie</id>
+    <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We&#8217;ll let you know if that email address is legit or not.'>
+As you know Django's <code>forms.EmailField()</code> is capable of validating email addresses but what if you wanted to validate the existence of a particular email address? I've found a pretty neat solution for that, it's called <a href="http://emailpie.com/">Email Pie</a>.
+Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We'll let you know if that email address is legit or not.. You could either use the service hosted on emailpie.com or run your own instance (it's open source). In this post, I'm going to show you how to write a custom form field that makes use of Email Pie.</p>
+
+<p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
+
+<p>``` python fields.py
+import requests
+import simplejson</p>
+
+<p>from django.core.exceptions import ValidationError</p>
+
+<p>EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance</p>
+
+<p>def validate_email_pie(value):</p>
+
+<pre><code>params = {'email': value}
+response = requests.get('%s/v1/check' % EMAIL_PIE_HOST, params=params)
+response = simplejson.loads(response.content)
+
+if not response['success']:
+    raise ValidationError(response['errors'][0]['message'])
+</code></pre>
+
+<p>class EmailPieField(forms.EmailField):</p>
+
+<pre><code>default_validators = [validate_email_pie]
+</code></pre>
+
+<p>```</p>
+
+<p><code>validate_email_pie</code> method makes GET request to Email Pie and gets back a response. The service checks for email format and mx records, it also catches misspellings (you can get it with <code>response['didyoumean']</code>). <code>validate_email_pie</code> raises <code>ValidationError</code> if the service detects an invalid email address. Now in your forms you can use <code>EmailPieField</code> like this:</p>
+
+<p>``` python forms.py
+from django import forms
+from .fields import EmailPieField</p>
+
+<p>class ContactForm(forms.Form):</p>
+
+<pre><code>name = forms.CharField()
+email = EmailPieField()
+</code></pre>
+
+<p>```</p>
+
+<p>For those interested, here are some tests for the field :)</p>
+
+<p>``` python tests.py
+from django.test import TestCase
+from django.core.exceptions import ValidationError
+from .fields import EmailPieField</p>
+
+<p>class EmailPieFieldTest(TestCase):</p>
+
+<pre><code>def test_invalid_email(self):
+    email_field = EmailPieField()
+    self.assertRaises(ValidationError, email_field.clean, 'email@totest')
+
+def test_invalid_mx(self):
+    email_field = EmailPieField()
+    self.assertRaises(ValidationError, email_field.clean, 'email@totest.com')
+
+def test_valid_email(self):
+    email_field = EmailPieField()
+    self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
+</code></pre>
+
+<p>```
+</span></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python class factory]]></title>
@@ -263,74 +340,6 @@ if auth_token.token_update():
 <p>```</p>
 
 <p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[More on Django FormView]]></title>
-    <link href="http://blog.namis.me/2012/02/13/more-on-django-formview/"/>
-    <updated>2012-02-13T21:49:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/13/more-on-django-formview</id>
-    <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Django’s generic views were developed to take away the monotony of repeating certain patterns again and again'>
-I've been trying to limit myself to use class based generic views as much as possible. Django’s generic views were developed to take away the monotony of repeating certain patterns again and again. Some generics views are properly documented (like ListView and DetailView), however I wanted to make use of FormView to process my forms. Unfortunately, there were no FormView examples provided. So here it is.</p>
-
-<!-- more -->
-
-
-<p>``` python
-from django.views import generic</p>
-
-<p>class EmailPreferenceView(generic.FormView):</p>
-
-<pre><code>form_class = EmailPreferenceForm
-
-def get(self, *args, **kwargs):
-    # You can access url variables from kwargs
-    # url: /email_preferences/geeknam &gt; kwargs['username'] = 'geeknam'
-    # Assign to self.subscriber to be used later
-    self.subscriber = get_subscriber(kwargs['username'])
-
-def post(self, request, *args, **kwargs):
-    # Process view when the form gets POSTed
-    pass
-
-def get_initial(self):
-    # Populate ticks in BooleanFields
-    initial = {}
-    for s in self.subscriber.events.all():
-        initial[s.value_id] = True
-    return initial
-
-def get_form(self, form_class):
-    # Initialize the form with initial values and the subscriber object
-    # to be used in EmailPreferenceForm for populating fields
-    return form_class(
-        initial=self.get_initial(),
-        subscriber=self.subscriber
-    )
-
-def get_success_url(self):
-    # Redirect to previous url
-    return self.request.META.get('HTTP_REFERER', None)
-
-def form_valid(self, form):
-    messages.info(
-        self.request,
-        "You have successfully changed your email notifications"
-    )
-    return super(EmailPreferenceView, self).form_valid(form)
-
-def form_invalid(self, form):
-    messages.info(
-        self.request,
-        "Your submission has not been saved. Try again."
-    )
-    return super(EmailPreferenceView, self).form_invalid(form)
-</code></pre>
-
-<p>email_preferences = EmailPreferenceView.as_view()
-```
-</span></p>
 ]]></content>
   </entry>
   

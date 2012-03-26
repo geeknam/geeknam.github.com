@@ -4,7 +4,7 @@
   <title><![CDATA[Category: django | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-02-17T12:49:43+11:00</updated>
+  <updated>2012-03-27T01:56:04+11:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,83 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Django custom email form field for Email Pie]]></title>
+    <link href="http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie/"/>
+    <updated>2012-03-27T01:14:00+11:00</updated>
+    <id>http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie</id>
+    <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We&#8217;ll let you know if that email address is legit or not.'>
+As you know Django's <code>forms.EmailField()</code> is capable of validating email addresses but what if you wanted to validate the existence of a particular email address? I've found a pretty neat solution for that, it's called <a href="http://emailpie.com/">Email Pie</a>.
+Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We'll let you know if that email address is legit or not.. You could either use the service hosted on emailpie.com or run your own instance (it's open source). In this post, I'm going to show you how to write a custom form field that makes use of Email Pie.</p>
+
+<p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
+
+<p>``` python fields.py
+import requests
+import simplejson</p>
+
+<p>from django.core.exceptions import ValidationError</p>
+
+<p>EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance</p>
+
+<p>def validate_email_pie(value):</p>
+
+<pre><code>params = {'email': value}
+response = requests.get('%s/v1/check' % EMAIL_PIE_HOST, params=params)
+response = simplejson.loads(response.content)
+
+if not response['success']:
+    raise ValidationError(response['errors'][0]['message'])
+</code></pre>
+
+<p>class EmailPieField(forms.EmailField):</p>
+
+<pre><code>default_validators = [validate_email_pie]
+</code></pre>
+
+<p>```</p>
+
+<p><code>validate_email_pie</code> method makes GET request to Email Pie and gets back a response. The service checks for email format and mx records, it also catches misspellings (you can get it with <code>response['didyoumean']</code>). <code>validate_email_pie</code> raises <code>ValidationError</code> if the service detects an invalid email address. Now in your forms you can use <code>EmailPieField</code> like this:</p>
+
+<p>``` python forms.py
+from django import forms
+from .fields import EmailPieField</p>
+
+<p>class ContactForm(forms.Form):</p>
+
+<pre><code>name = forms.CharField()
+email = EmailPieField()
+</code></pre>
+
+<p>```</p>
+
+<p>For those interested, here are some tests for the field :)</p>
+
+<p>``` python tests.py
+from django.test import TestCase
+from django.core.exceptions import ValidationError
+from .fields import EmailPieField</p>
+
+<p>class EmailPieFieldTest(TestCase):</p>
+
+<pre><code>def test_invalid_email(self):
+    email_field = EmailPieField()
+    self.assertRaises(ValidationError, email_field.clean, 'email@totest')
+
+def test_invalid_mx(self):
+    email_field = EmailPieField()
+    self.assertRaises(ValidationError, email_field.clean, 'email@totest.com')
+
+def test_valid_email(self):
+    email_field = EmailPieField()
+    self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
+</code></pre>
+
+<p>```
+</span></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python caching using defaultdict]]></title>
@@ -321,64 +398,6 @@ else:
 </code></pre>
 
 <p>```</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Loading fixtures in Django tests]]></title>
-    <link href="http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests/"/>
-    <updated>2012-02-13T14:22:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests</id>
-    <content type="html"><![CDATA[<p>When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a GlobalSetup class that other tests should inherit from (it's located at the project level). However, this approach creates a problem with loading fixtures. According to Django <a href="https://docs.djangoproject.com/en/dev/topics/testing/">docs</a>: <!-- more --></p>
-
-<p><blockquote><p>Once you've created a fixture and placed it in a fixtures directory in one of your INSTALLED_APPS, you can use it in your unit tests by specifying a fixtures class attribute on your django.test.TestCase subclass</p></blockquote></p>
-
-<p>And you would normally do this to load the fixtures:<br/>
-``` python
-from django.test import TestCase</p>
-
-<p>class PoniesTest(TestCase):</p>
-
-<pre><code>fixtures = ['ponies']
-
-def test_ponies(self):
-    call_some_test_code()
-</code></pre>
-
-<p><code>
-How should we load the fixtures now, when the test file is not at the apps level?
-Instead of creating fixures folder and placing fixtures in them (in every app), a better and neater way to handle this would be to put all fixtures in one folder at the project level and load them. You can do this with `call_command` as following:  
-</code> python
-from django.test import TestCase
-from django.core.management import call_command</p>
-
-<p>class GlobalSetup(self):</p>
-
-<pre><code># Create some ponies and snakes here
-def setUp(self):
-    # Load fixtures
-    call_command('loaddata', 'tests/ponies', verbosity=0)
-</code></pre>
-
-<p>```</p>
-
-<p>Invoking this <code>call_command</code> is equivalent to running <code>manage.py loaddata /path/to/fixtures</code>
-The test in each app can now inherit GlocalSetup and reuse setUp():
-``` python
-from project.tests import GlobalSetup</p>
-
-<p>class PoniesTest(GlobalSetup):</p>
-
-<pre><code>def setUp(self):
-    super(PoniesTest, self).setUp()
-
-def test_ponies(self):
-    call_some_test_code()
-</code></pre>
-
-<p><code>``
-You could also limit each test to load different fixtures by passing a list of fixtures name</code>['ponies', 'snakes']` to setUp().
-Hope this will help you to DRY up your tests.</p>
 ]]></content>
   </entry>
   

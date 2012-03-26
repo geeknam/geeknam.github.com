@@ -9,7 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="I&#8217;ve just registered an account on Google Storage last month and I totally love it as. I particularly like gsutil since I&#8217;m most of my &hellip;">
+  <meta name="description" content="If you have the following error after uploading your WordPress, and re-uploading category-template.php didn&#8217;t work, you could try pasting this &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,89 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/">Fatal Error: Call to Undefined Function _make_cat_compat()</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-05T13:23:00+11:00" pubdate data-updated="true">Nov 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>If you have the following error after uploading your WordPress, and re-uploading <code>category-template.php</code> didn&#8217;t work, you could try pasting this function at the of the file.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">_make_cat_compat</span><span class="p">(</span> <span class="o">&amp;</span><span class="nv">$category</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="nb">is_object</span><span class="p">(</span> <span class="nv">$category</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">cat_ID</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">term_id</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_count</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">count</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_description</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">description</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">cat_name</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_nicename</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">slug</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="o">-&gt;</span><span class="na">category_parent</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="o">-&gt;</span><span class="na">parent</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">elseif</span> <span class="p">(</span> <span class="nb">is_array</span><span class="p">(</span> <span class="nv">$category</span> <span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">isset</span><span class="p">(</span> <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;term_id&#39;</span><span class="p">]</span> <span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;cat_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;term_id&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;cat_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_nicename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;slug&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;category_parent&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;parent&#39;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -416,6 +499,10 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/03/27/django-custom-email-form-field-for-email-pie/">Django custom email form field for Email Pie</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/02/16/python-class-factory/">Python class factory</a>
       </li>
     
@@ -429,10 +516,6 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
     
       <li class="post">
         <a href="/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/">Regenerating Google&#8217;s ClientLogin AuthToken in Django</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/13/more-on-django-formview/">More on Django FormView</a>
       </li>
     
   </ul>
