@@ -72,7 +72,11 @@
     </url>
     <url>
         <loc>http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie/</loc>
-        <lastmod>2012-03-27T02:01:12+11:00</lastmod>
+        <lastmod>2012-03-28T00:07:37+11:00</lastmod>
+    </url>
+    <url>
+        <loc>http://blog.namis.me/2012/04/21/burn-your-fixtures/</loc>
+        <lastmod>2012-04-21T17:19:41+10:00</lastmod>
     </url>
     <url>
         <loc>http://blog.namis.me/about/</loc>
@@ -80,10 +84,10 @@
     </url>
     <url>
         <loc>http://blog.namis.me/blog/archives/</loc>
-        <lastmod>2012-03-27T02:01:12+11:00</lastmod>
+        <lastmod>2012-04-21T17:19:41+10:00</lastmod>
     </url>
     <url>
         <loc>http://blog.namis.me/</loc>
-        <lastmod>2012-03-27T02:01:12+11:00</lastmod>
+        <lastmod>2012-04-21T17:19:41+10:00</lastmod>
     </url>
 </urlset>

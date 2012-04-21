@@ -4,7 +4,7 @@
   <title><![CDATA[Category: django | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-03-27T02:01:24+11:00</updated>
+  <updated>2012-04-21T17:20:17+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,54 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>
+    <link href="http://blog.namis.me/2012/04/21/burn-your-fixtures/"/>
+    <updated>2012-04-21T16:46:00+10:00</updated>
+    <id>http://blog.namis.me/2012/04/21/burn-your-fixtures</id>
+    <content type="html"><![CDATA[<p>This blog post is inspired by one of the talks in PyCon US 2012 by <a href="http://twitter.com/carljm">Carl Meyer</a> named <a href="http://pyvideo.org/video/699/testing-and-django">Testing and Django</a> in which he discusssed the guidelines for writing good tests.</p>
+
+<p>After watching the whole talk, I realised what I've been doing is all wrong. The fact that tests I write run within minutes shows how terrible my unit-test-fu is. Using fixtures was a really bad idea. Each test case I wrote would load some fixtures to setup necessary dependencies. Sometimes, this creates a problem when the model has been redesigned. The fixtures would have to be edited due to the change of the model otherwise they won't be installed properly.</p>
+
+<p>Instead of using fixtures, Carl introduced <code>model factories</code> which would create a model instance with default values. Of course, you will have a flexibility to change those default values to suit each of your test because naturally, when you test a behaviour of a class, you definitely need it to be in different conditions.</p>
+
+<!-- more -->
+
+
+<p>Here is an example of a model factory that was used in the talk:</p>
+
+<p>``` python
+def create_profile(**kwargs):</p>
+
+<pre><code>defaults = {
+    "likes_cheese": True,
+    "age": 32,
+    "address": "3815 Brookside Dr",
+}
+defaults.update(kwargs)
+if "user" not in defaults:
+    defaults["user"] = create_user()
+return Profile.objects.create(**defaults)
+</code></pre>
+
+<p>```</p>
+
+<p>And this is how you could use it in the test:</p>
+
+<p>``` python
+def test_can_vote(self):</p>
+
+<pre><code>"""A user age 18+ can vote in the US."""
+profile = create_profile(age=18)
+self.assertTrue(profile.can_vote)
+</code></pre>
+
+<p>```</p>
+
+<p>This approach solves the problem with maintaining the fixtures to suit your model design. If your model changes, the only thing you have to edit is the default values of the factory. Therefore <code>model factories</code> are way easier to maintain. If you need a large data set, you could easily write a for loop that wraps the model factory. So burn all your fixture right now !!!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Django custom email form field for Email Pie]]></title>
@@ -31,7 +79,8 @@ Email Pie is a wonderful little JSON API that gives you a simple way to validate
 import requests
 import simplejson</p>
 
-<p>from django.core.exceptions import ValidationError</p>
+<p>from django import forms
+from django.core.exceptions import ValidationError</p>
 
 <p>EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance</p>
 
@@ -306,101 +355,6 @@ def form_invalid(self, form):
 <p>email_preferences = EmailPreferenceView.as_view()
 ```
 </span></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Django dynamic unsubscribe forms]]></title>
-    <link href="http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms/"/>
-    <updated>2012-02-13T15:40:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms</id>
-    <content type="html"><![CDATA[<p>The normal usecase of Django forms is to have predefined fields in forms like this:</p>
-
-<p>``` python
-from django import forms</p>
-
-<p>class EmailPreferenceForm(forms.Form):</p>
-
-<pre><code>daily_digest = forms.BooleanField(required=False)
-weekly_news = forms.BooleanField(required=False)
-monthly_summary = forms.BooleanField(required=False)
-</code></pre>
-
-<p>```</p>
-
-<p>What if we wanted to add more fields to the form like <code>weekly_digest</code> and so on? Well, of course you would have to add a new field to the form and maybe handle extra work in your views. Let's make this more dynamic.</p>
-
-<!-- more -->
-
-
-<p>Let's create Event model which will store all events. Entries from this model will be generated into fields in the form later:</p>
-
-<p>``` python
-from django.db import models</p>
-
-<p>class Event(models.Model):</p>
-
-<pre><code>title = models.CharField(
-    max_length=100,
-    help_text='e.g: Weekly News'
-)
-title_id = models.CharField(
-    max_length=100,
-    blank=True,
-    editable=False
-)
-
-def __unicode__(self):
-    return self.title
-
-def save(self, *args, **kwargs):
-    if not self.title_id:
-        # Generate title_id based on title
-        # Weekly News &gt; weekly_news
-        self.title_id = self.title.lower().replace(' ', '_').replace("'", '')
-</code></pre>
-
-<p>```</p>
-
-<p>And now the form that will generate fields based on all entries in Event model</p>
-
-<p>``` python
-from django import forms
-from models import Event</p>
-
-<p>class EmailPreferenceForm(forms.Form):</p>
-
-<pre><code># Auto generate fields based on title_id in Event
-def __init__(self, *args, **kwargs):
-    super(EmailPreferenceForm, self).__init__(*args, **kwargs)
-    fields = Event.objects.all()
-    for f in fields:
-        self.fields[f.title_id] = forms.BooleanField(required=False)
-</code></pre>
-
-<p>```</p>
-
-<p>Let's say you have a Subscriber model that has many Events. This piece of code will initialize the checkboxes based on subscribers' preferences.</p>
-
-<p>``` python
-from forms import EmailPreferenceForm</p>
-
-<p>def email_preferences(request):</p>
-
-<pre><code>if request.method == 'POST':
-    email_preferences = EmailPreferenceForm(request.POST)
-    # Process the form
-else:
-    # Initialize the preferences. This will make the boxes checked.
-    initial = {}
-    for e in subscriber.events.all():
-        initial[e.title_id] = True
-    email_preferences = EmailPreferenceForm(initial=initial)
-
-# Context and HTTPResponses here
-</code></pre>
-
-<p>```</p>
 ]]></content>
   </entry>
   

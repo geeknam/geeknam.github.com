@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/python/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-03-27T02:01:24+11:00</updated>
+  <updated>2012-04-21T17:20:17+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,54 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>
+    <link href="http://blog.namis.me/2012/04/21/burn-your-fixtures/"/>
+    <updated>2012-04-21T16:46:00+10:00</updated>
+    <id>http://blog.namis.me/2012/04/21/burn-your-fixtures</id>
+    <content type="html"><![CDATA[<p>This blog post is inspired by one of the talks in PyCon US 2012 by <a href="http://twitter.com/carljm">Carl Meyer</a> named <a href="http://pyvideo.org/video/699/testing-and-django">Testing and Django</a> in which he discusssed the guidelines for writing good tests.</p>
+
+<p>After watching the whole talk, I realised what I've been doing is all wrong. The fact that tests I write run within minutes shows how terrible my unit-test-fu is. Using fixtures was a really bad idea. Each test case I wrote would load some fixtures to setup necessary dependencies. Sometimes, this creates a problem when the model has been redesigned. The fixtures would have to be edited due to the change of the model otherwise they won't be installed properly.</p>
+
+<p>Instead of using fixtures, Carl introduced <code>model factories</code> which would create a model instance with default values. Of course, you will have a flexibility to change those default values to suit each of your test because naturally, when you test a behaviour of a class, you definitely need it to be in different conditions.</p>
+
+<!-- more -->
+
+
+<p>Here is an example of a model factory that was used in the talk:</p>
+
+<p>``` python
+def create_profile(**kwargs):</p>
+
+<pre><code>defaults = {
+    "likes_cheese": True,
+    "age": 32,
+    "address": "3815 Brookside Dr",
+}
+defaults.update(kwargs)
+if "user" not in defaults:
+    defaults["user"] = create_user()
+return Profile.objects.create(**defaults)
+</code></pre>
+
+<p>```</p>
+
+<p>And this is how you could use it in the test:</p>
+
+<p>``` python
+def test_can_vote(self):</p>
+
+<pre><code>"""A user age 18+ can vote in the US."""
+profile = create_profile(age=18)
+self.assertTrue(profile.can_vote)
+</code></pre>
+
+<p>```</p>
+
+<p>This approach solves the problem with maintaining the fixtures to suit your model design. If your model changes, the only thing you have to edit is the default values of the factory. Therefore <code>model factories</code> are way easier to maintain. If you need a large data set, you could easily write a for loop that wraps the model factory. So burn all your fixture right now !!!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Django custom email form field for Email Pie]]></title>
@@ -31,7 +79,8 @@ Email Pie is a wonderful little JSON API that gives you a simple way to validate
 import requests
 import simplejson</p>
 
-<p>from django.core.exceptions import ValidationError</p>
+<p>from django import forms
+from django.core.exceptions import ValidationError</p>
 
 <p>EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance</p>
 
@@ -277,72 +326,6 @@ datetime.strptime("2011-04-05 18:40:58.525996", "%Y-%m-%d %H:%M:%S.%f")
 t = threading.Thread(target=format_time, args=(some_values))
 t.start()
 </code></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Regenerating Google's ClientLogin AuthToken in Django]]></title>
-    <link href="http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/"/>
-    <updated>2012-02-14T12:47:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django</id>
-    <content type="html"><![CDATA[<p>If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, AuthToken generated with ClientLogin authorization expires after 2 weeks. Therefore, it's good to have a solution to auto regenerate it. First of all, create a model that stores the token and the last updated day.</p>
-
-<!-- more -->
-
-
-<p>``` python
-from django.db import models
-from datetime import datetime, timedelta</p>
-
-<p>class AuthToken(models.Model):</p>
-
-<pre><code>token = models.TextField()
-last_updated = models.DateTimeField(auto_now_add=True)
-
-def token_update(self):
-    # Check if the token's lifespan is more than n days (n=1 in this case)
-    # You can adjust n value to whatever you want
-
-    if datetime.now() - self.last_updated &gt; timedelta(days=1):
-        return True
-    return False
-</code></pre>
-
-<p>```</p>
-
-<p>Now let's write a function that regenerates AuthToken and saves it back to database.</p>
-
-<p>```python
-from models import AuthToken</p>
-
-<p>CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'</p>
-
-<p>def regenerate_authtoken():</p>
-
-<pre><code>auth_token = AuthToken.objects.all()[0]
-if auth_token.token_update():
-    data = urllib.urlencode(
-        {
-            'Email': 'youremail@gmail.com',
-            'Passwd': 'yourpassword',
-            'service': 'service_name',
-            'accountType': 'GOOGLE'
-        }
-    )
-    req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
-    resp = urllib2.urlopen(req)
-    resp_body = resp.read()
-
-    resp_dict = dict(
-        x.split('=') for x in resp_body.split('\n') if x
-    )
-    auth_token.token = resp_dict['Auth']
-    auth_token.save()
-</code></pre>
-
-<p>```</p>
-
-<p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
 ]]></content>
   </entry>
   

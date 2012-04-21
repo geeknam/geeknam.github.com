@@ -9,7 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="As you know Django&#8217;s forms.EmailField() is capable of validating email addresses but what if you wanted to validate the existence of a &hellip;">
+  <meta name="description" content="This blog post is inspired by one of the talks in PyCon US 2012 by Carl Meyer named Testing and Django in which he discusssed the guidelines for &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,51 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/04/21/burn-your-fixtures/">Burn Your Fixtures, Use Model Factories</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-21T16:46:00+10:00" pubdate data-updated="true">Apr 21<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This blog post is inspired by one of the talks in PyCon US 2012 by <a href="http://twitter.com/carljm">Carl Meyer</a> named <a href="http://pyvideo.org/video/699/testing-and-django">Testing and Django</a> in which he discusssed the guidelines for writing good tests.</p>
+
+<p>After watching the whole talk, I realised what I&#8217;ve been doing is all wrong. The fact that tests I write run within minutes shows how terrible my unit-test-fu is. Using fixtures was a really bad idea. Each test case I wrote would load some fixtures to setup necessary dependencies. Sometimes, this creates a problem when the model has been redesigned. The fixtures would have to be edited due to the change of the model otherwise they won&#8217;t be installed properly.</p>
+
+<p>Instead of using fixtures, Carl introduced <code>model factories</code> which would create a model instance with default values. Of course, you will have a flexibility to change those default values to suit each of your test because naturally, when you test a behaviour of a class, you definitely need it to be in different conditions.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/2012/04/21/burn-your-fixtures/">Read more &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -469,49 +514,6 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/11/12/fabric-deployment/">Fabric Deployment</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-11-12T13:28:00+11:00" pubdate data-updated="true">Nov 12<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Having played with Capistrano before, I suddenly had an urge to find its Pythonic alternative. After few google searches, I stumbled upon Fabric. It&#8217;s basically a &#8220;python library and command-line tool for streamlining the use of SSH for application deployment or systems administration tasks&#8221;. Spent few minutes trying to write functions to deploy Django applications to my Linux server and I have to say, Fabric&#8217;s API is really easy to use, very customizable (it&#8217;s as easy as wrapping up your shell commands in a python function) and more importantly it has Django integration which I&#8217;m gonna need the most. Having said all these, here&#8217;s the video demo I recorded while messing around with Fabric, enjoy:</p>
-
-<p>P/S: django-nose, nosegrowl2 and tdaemon were used in order to show notification of testing results (just FYI)</p>
-
-<object class="BLOGGER-youtube-video" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" data-thumbnail-src="http://i.ytimg.com/vi/xtmb-5WPWQs/0.jpg" height="266" width="320"><param name="movie" value="http://www.youtube.com/v/xtmb-5WPWQs?version=3&f=user_uploads&c=google-webdrive-0&app=youtube_gdata" />
-<param name="bgcolor" value="#FFFFFF" />
-<embed width="620" height="420"  src="http://www.youtube.com/v/xtmb-5WPWQs?version=3&f=user_uploads&c=google-webdrive-0&app=youtube_gdata" type="application/x-shockwave-flash"></embed></object>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -527,6 +529,10 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/04/21/burn-your-fixtures/">Burn your fixtures, use model factories</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/03/27/django-custom-email-form-field-for-email-pie/">Django custom email form field for Email Pie</a>
       </li>
     
@@ -540,10 +546,6 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
     
       <li class="post">
         <a href="/2012/02/14/python-strptime-is-not-thread-safe/">Python strptime is not thread-safe</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/">Regenerating Google&#8217;s ClientLogin AuthToken in Django</a>
       </li>
     
   </ul>

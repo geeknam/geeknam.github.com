@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://blog.namis.me/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-03-27T02:01:24+11:00</updated>
+  <updated>2012-04-21T17:20:17+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,62 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>
+    <link href="http://blog.namis.me/2012/04/21/burn-your-fixtures/"/>
+    <updated>2012-04-21T16:46:00+10:00</updated>
+    <id>http://blog.namis.me/2012/04/21/burn-your-fixtures</id>
+    <content type="html"><![CDATA[<p>This blog post is inspired by one of the talks in PyCon US 2012 by <a href="http://twitter.com/carljm">Carl Meyer</a> named <a href="http://pyvideo.org/video/699/testing-and-django">Testing and Django</a> in which he discusssed the guidelines for writing good tests.</p>
+
+<p>After watching the whole talk, I realised what I&#8217;ve been doing is all wrong. The fact that tests I write run within minutes shows how terrible my unit-test-fu is. Using fixtures was a really bad idea. Each test case I wrote would load some fixtures to setup necessary dependencies. Sometimes, this creates a problem when the model has been redesigned. The fixtures would have to be edited due to the change of the model otherwise they won&#8217;t be installed properly.</p>
+
+<p>Instead of using fixtures, Carl introduced <code>model factories</code> which would create a model instance with default values. Of course, you will have a flexibility to change those default values to suit each of your test because naturally, when you test a behaviour of a class, you definitely need it to be in different conditions.</p>
+
+<!-- more -->
+
+
+<p>Here is an example of a model factory that was used in the talk:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">create_profile</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s">&quot;likes_cheese&quot;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&quot;age&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&quot;address&quot;</span><span class="p">:</span> <span class="s">&quot;3815 Brookside Dr&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">defaults</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="s">&quot;user&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">defaults</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">defaults</span><span class="p">[</span><span class="s">&quot;user&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_user</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">Profile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">defaults</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And this is how you could use it in the test:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">test_can_vote</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;A user age 18+ can vote in the US.&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">profile</span> <span class="o">=</span> <span class="n">create_profile</span><span class="p">(</span><span class="n">age</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">can_vote</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This approach solves the problem with maintaining the fixtures to suit your model design. If your model changes, the only thing you have to edit is the default values of the factory. Therefore <code>model factories</code> are way easier to maintain. If you need a large data set, you could easily write a for loop that wraps the model factory. So burn all your fixture right now !!!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Django custom email form field for Email Pie]]></title>
@@ -46,9 +102,11 @@ Email Pie is a wonderful little JSON API that gives you a simple way to validate
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
+<span class='line-number'>20</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">requests</span>
 </span><span class='line'><span class="kn">import</span> <span class="nn">simplejson</span>
 </span><span class='line'>
+</span><span class='line'><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
 </span><span class='line'><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ValidationError</span>
 </span><span class='line'>
 </span><span class='line'>
