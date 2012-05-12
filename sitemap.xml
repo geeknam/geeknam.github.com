@@ -79,15 +79,19 @@
         <lastmod>2012-04-21T17:19:41+10:00</lastmod>
     </url>
     <url>
+        <loc>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware/</loc>
+        <lastmod>2012-05-13T04:47:28+10:00</lastmod>
+    </url>
+    <url>
         <loc>http://blog.namis.me/about/</loc>
-        <lastmod>2012-02-14T13:18:29+11:00</lastmod>
+        <lastmod>2012-05-07T02:31:22+10:00</lastmod>
     </url>
     <url>
         <loc>http://blog.namis.me/blog/archives/</loc>
-        <lastmod>2012-04-21T17:19:41+10:00</lastmod>
+        <lastmod>2012-05-13T04:47:28+10:00</lastmod>
     </url>
     <url>
         <loc>http://blog.namis.me/</loc>
-        <lastmod>2012-04-21T17:19:41+10:00</lastmod>
+        <lastmod>2012-05-13T04:47:28+10:00</lastmod>
     </url>
 </urlset>

@@ -9,7 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="This blog post is inspired by one of the talks in PyCon US 2012 by Carl Meyer named Testing and Django in which he discusssed the guidelines for &hellip;">
+  <meta name="description" content="Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,78 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/05/13/writing-unit-tests-for-django-middleware/">Writing Unit Tests for Django Middleware</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-13T02:21:00+10:00" pubdate data-updated="true">May 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of the scenarios is testing middleware. Let&#8217;s take a look at this middleware.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">.cart</span> <span class="kn">import</span> <span class="n">Cart</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CartMiddleware</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span><span class='line'>        <span class="sd">&#39;&#39;&#39;Load the current cart from the session, or create a new one&#39;&#39;&#39;</span>
+</span><span class='line'>        <span class="n">cart</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;cart&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">cart</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="p">()</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="p">(</span><span class="o">**</span><span class="n">cart</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nb">setattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">&#39;cart&#39;</span><span class="p">,</span> <span class="n">cart</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">None</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/2012/05/13/writing-unit-tests-for-django-middleware/">Read more &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -473,47 +545,6 @@ I&#8217;ve been trying to limit myself to use class based generic views as much 
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2012/02/11/first-post-from-octopress/">First Post From Octopress</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-11T21:42:00+11:00" pubdate data-updated="true">Feb 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Hey there! This is my new blog powered by <a href="http://octopress.org/">Octropress</a> and hosted on Github.
-Octopress was exactly what I was looking for in a blog engine
-(Yes, code snippets should be built out of the box in a blog).
-I&#8217;ve had Blogger previously but ever since I switched it to the new theme, all my github gists
-were not able to display. So I abandoned it. I might migrate the posts from Blogger here, however I&#8217;ll mainly
-focus on writing about Python and Django in this one. That&#8217;s about it, stay tuned for the next post. :wq</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -529,6 +560,10 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/05/13/writing-unit-tests-for-django-middleware/">Writing unit tests for Django middleware</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/04/21/burn-your-fixtures/">Burn your fixtures, use model factories</a>
       </li>
     
@@ -542,10 +577,6 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
     
       <li class="post">
         <a href="/2012/02/15/python-caching-using-defaultdict/">Python caching using defaultdict</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/14/python-strptime-is-not-thread-safe/">Python strptime is not thread-safe</a>
       </li>
     
   </ul>

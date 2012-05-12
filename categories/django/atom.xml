@@ -4,7 +4,7 @@
   <title><![CDATA[Category: django | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-04-21T17:20:17+10:00</updated>
+  <updated>2012-05-13T04:47:35+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,98 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Writing unit tests for Django middleware]]></title>
+    <link href="http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware/"/>
+    <updated>2012-05-13T02:21:00+10:00</updated>
+    <id>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware</id>
+    <content type="html"><![CDATA[<p>Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of the scenarios is testing middleware. Let's take a look at this middleware.</p>
+
+<p>``` python
+from .cart import Cart</p>
+
+<p>class CartMiddleware:</p>
+
+<pre><code>def process_request(self, request):
+    '''Load the current cart from the session, or create a new one'''
+    cart = request.session.get('cart', None)
+
+    if cart is None:
+        cart = Cart()
+    else:
+        cart = Cart(**cart)
+
+    setattr(request, 'cart', cart)
+    return None
+</code></pre>
+
+<p>```</p>
+
+<!-- more -->
+
+
+<p><strong>What the middleware does:</strong><br/>
+- It gets attributes/values of the cart from the session<br/>
+- It creates a cart with those unpacked arguments or creates a fresh cart and attaches this cart to the request object.</p>
+
+<p><strong>Now, let's analyze what needs to be tested:</strong><br/>
+1. Assert that if the cart exists in the session, it should be set as an attribute of the request<br/>
+2. Assert that if the cart doesn't exist in the session, a new cart is created and attached to the request object<br/>
+3. Assert that all attributes of the cart can be accessed after the cart is attached to the request object</p>
+
+<p><strong>How about dependencies? What do we need in order to write this test?</strong><br/>
+- CartMiddleware class (this can be easily imported)<br/>
+- <code>request</code> object as an argument in process_request(). This one is hard to obtain, and since we are writing a unit test, let's just mock it.</p>
+
+<p>We are now ready to write the test</p>
+
+<p>``` python
+from django.test import TestCase
+from mock import Mock
+from .cart import CartMiddleware, Cart</p>
+
+<p>class CartMiddlewareTest(TestCase):</p>
+
+<pre><code>def setUp(self):
+    self.cm = CartMiddleware()
+    self.request = Mock()
+    self.request.session = {}
+</code></pre>
+
+<p>```</p>
+
+<p>This sets up an instance of CartMiddleware and mocks a request. I'm using Michael Foord's <code>mock</code> library to assist me with this. Since we know <code>session</code> is a dictionary like object, we can mock it with an empty dictionary for now.</p>
+
+<p>``` python</p>
+
+<pre><code>def test_process_request_without_cart(self):
+    self.assertEqual(self.cm.process_request(self.request), None)
+    self.assertIsInstance(self.request.cart, Cart)
+
+def test_process_request_with_cart(self):
+    data = {'postcode': '3050'}
+    self.request.session = {'cart': data}
+    self.assertEqual(self.cm.process_request(self.request), None)
+    self.assertIsInstance(self.request.cart, Cart)
+    self.assertEqual(self.request.cart.postcode, data['postcode'])
+</code></pre>
+
+<p>```</p>
+
+<p><strong>The first test asserts that (without a cart in the session):</strong><br/>
+- process_request returns None<br/>
+- Cart object has been attached to request as an attribute</p>
+
+<p><strong>The second test asserts that (with a cart in the session):</strong><br/>
+- process_request returns None<br/>
+- Dictionary containing cart attributes in <code>session</code> is unpacked and used to create a Cart object.<br/>
+- The cart attribute (postcode in this case) can be accessed</p>
+
+<p><strong>Conclusion</strong><br/>
+As you could see, I didn't have to use <code>django.test.client.Client</code> to create requests, responses or sessions. When writing unit tests, one shouldn't care much about creating a precise dependency because, eventually what needs to be tested is the behaviour of the code and not the dependency itself. Therefore, it is more advisable to mock those dependencies in order to satisfy the conditions of the unit of code we test.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>
@@ -287,74 +379,6 @@ if auth_token.token_update():
 <p>```</p>
 
 <p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[More on Django FormView]]></title>
-    <link href="http://blog.namis.me/2012/02/13/more-on-django-formview/"/>
-    <updated>2012-02-13T21:49:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/13/more-on-django-formview</id>
-    <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Django’s generic views were developed to take away the monotony of repeating certain patterns again and again'>
-I've been trying to limit myself to use class based generic views as much as possible. Django’s generic views were developed to take away the monotony of repeating certain patterns again and again. Some generics views are properly documented (like ListView and DetailView), however I wanted to make use of FormView to process my forms. Unfortunately, there were no FormView examples provided. So here it is.</p>
-
-<!-- more -->
-
-
-<p>``` python
-from django.views import generic</p>
-
-<p>class EmailPreferenceView(generic.FormView):</p>
-
-<pre><code>form_class = EmailPreferenceForm
-
-def get(self, *args, **kwargs):
-    # You can access url variables from kwargs
-    # url: /email_preferences/geeknam &gt; kwargs['username'] = 'geeknam'
-    # Assign to self.subscriber to be used later
-    self.subscriber = get_subscriber(kwargs['username'])
-
-def post(self, request, *args, **kwargs):
-    # Process view when the form gets POSTed
-    pass
-
-def get_initial(self):
-    # Populate ticks in BooleanFields
-    initial = {}
-    for s in self.subscriber.events.all():
-        initial[s.value_id] = True
-    return initial
-
-def get_form(self, form_class):
-    # Initialize the form with initial values and the subscriber object
-    # to be used in EmailPreferenceForm for populating fields
-    return form_class(
-        initial=self.get_initial(),
-        subscriber=self.subscriber
-    )
-
-def get_success_url(self):
-    # Redirect to previous url
-    return self.request.META.get('HTTP_REFERER', None)
-
-def form_valid(self, form):
-    messages.info(
-        self.request,
-        "You have successfully changed your email notifications"
-    )
-    return super(EmailPreferenceView, self).form_valid(form)
-
-def form_invalid(self, form):
-    messages.info(
-        self.request,
-        "Your submission has not been saved. Try again."
-    )
-    return super(EmailPreferenceView, self).form_invalid(form)
-</code></pre>
-
-<p>email_preferences = EmailPreferenceView.as_view()
-```
-</span></p>
 ]]></content>
   </entry>
   

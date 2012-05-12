@@ -4,7 +4,7 @@
   <title><![CDATA[geeknam's blog]]></title>
   <link href="http://blog.namis.me/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-04-21T17:20:17+10:00</updated>
+  <updated>2012-05-13T04:47:35+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,124 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Writing unit tests for Django middleware]]></title>
+    <link href="http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware/"/>
+    <updated>2012-05-13T02:21:00+10:00</updated>
+    <id>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware</id>
+    <content type="html"><![CDATA[<p>Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of the scenarios is testing middleware. Let&#8217;s take a look at this middleware.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">.cart</span> <span class="kn">import</span> <span class="n">Cart</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CartMiddleware</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+</span><span class='line'>        <span class="sd">&#39;&#39;&#39;Load the current cart from the session, or create a new one&#39;&#39;&#39;</span>
+</span><span class='line'>        <span class="n">cart</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;cart&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">cart</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="p">()</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">cart</span> <span class="o">=</span> <span class="n">Cart</span><span class="p">(</span><span class="o">**</span><span class="n">cart</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nb">setattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">&#39;cart&#39;</span><span class="p">,</span> <span class="n">cart</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">None</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
+
+
+<p><strong>What the middleware does:</strong><br/>
+- It gets attributes/values of the cart from the session<br/>
+- It creates a cart with those unpacked arguments or creates a fresh cart and attaches this cart to the request object.</p>
+
+<p><strong>Now, let&#8217;s analyze what needs to be tested:</strong><br/>
+1. Assert that if the cart exists in the session, it should be set as an attribute of the request<br/>
+2. Assert that if the cart doesn&#8217;t exist in the session, a new cart is created and attached to the request object<br/>
+3. Assert that all attributes of the cart can be accessed after the cart is attached to the request object</p>
+
+<p><strong>How about dependencies? What do we need in order to write this test?</strong><br/>
+- CartMiddleware class (this can be easily imported)<br/>
+- <code>request</code> object as an argument in process_request(). This one is hard to obtain, and since we are writing a unit test, let&#8217;s just mock it.</p>
+
+<p>We are now ready to write the test</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">mock</span> <span class="kn">import</span> <span class="n">Mock</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">.cart</span> <span class="kn">import</span> <span class="n">CartMiddleware</span><span class="p">,</span> <span class="n">Cart</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CartMiddlewareTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="n">CartMiddleware</span><span class="p">()</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This sets up an instance of CartMiddleware and mocks a request. I&#8217;m using Michael Foord&#8217;s <code>mock</code> library to assist me with this. Since we know <code>session</code> is a dictionary like object, we can mock it with an empty dictionary for now.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">test_process_request_without_cart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cart</span><span class="p">,</span> <span class="n">Cart</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">test_process_request_with_cart</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;postcode&#39;</span><span class="p">:</span> <span class="s">&#39;3050&#39;</span><span class="p">}</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;cart&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">}</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">process_request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cart</span><span class="p">,</span> <span class="n">Cart</span><span class="p">)</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">cart</span><span class="o">.</span><span class="n">postcode</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;postcode&#39;</span><span class="p">])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>The first test asserts that (without a cart in the session):</strong><br/>
+- process_request returns None<br/>
+- Cart object has been attached to request as an attribute</p>
+
+<p><strong>The second test asserts that (with a cart in the session):</strong><br/>
+- process_request returns None<br/>
+- Dictionary containing cart attributes in <code>session</code> is unpacked and used to create a Cart object.<br/>
+- The cart attribute (postcode in this case) can be accessed</p>
+
+<p><strong>Conclusion</strong><br/>
+As you could see, I didn&#8217;t have to use <code>django.test.client.Client</code> to create requests, responses or sessions. When writing unit tests, one shouldn&#8217;t care much about creating a precise dependency because, eventually what needs to be tested is the behaviour of the code and not the dependency itself. Therefore, it is more advisable to mock those dependencies in order to satisfy the conditions of the unit of code we test.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>

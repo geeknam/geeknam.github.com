@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/python/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-04-21T17:20:17+10:00</updated>
+  <updated>2012-05-13T04:47:35+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,98 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Writing unit tests for Django middleware]]></title>
+    <link href="http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware/"/>
+    <updated>2012-05-13T02:21:00+10:00</updated>
+    <id>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware</id>
+    <content type="html"><![CDATA[<p>Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of the scenarios is testing middleware. Let's take a look at this middleware.</p>
+
+<p>``` python
+from .cart import Cart</p>
+
+<p>class CartMiddleware:</p>
+
+<pre><code>def process_request(self, request):
+    '''Load the current cart from the session, or create a new one'''
+    cart = request.session.get('cart', None)
+
+    if cart is None:
+        cart = Cart()
+    else:
+        cart = Cart(**cart)
+
+    setattr(request, 'cart', cart)
+    return None
+</code></pre>
+
+<p>```</p>
+
+<!-- more -->
+
+
+<p><strong>What the middleware does:</strong><br/>
+- It gets attributes/values of the cart from the session<br/>
+- It creates a cart with those unpacked arguments or creates a fresh cart and attaches this cart to the request object.</p>
+
+<p><strong>Now, let's analyze what needs to be tested:</strong><br/>
+1. Assert that if the cart exists in the session, it should be set as an attribute of the request<br/>
+2. Assert that if the cart doesn't exist in the session, a new cart is created and attached to the request object<br/>
+3. Assert that all attributes of the cart can be accessed after the cart is attached to the request object</p>
+
+<p><strong>How about dependencies? What do we need in order to write this test?</strong><br/>
+- CartMiddleware class (this can be easily imported)<br/>
+- <code>request</code> object as an argument in process_request(). This one is hard to obtain, and since we are writing a unit test, let's just mock it.</p>
+
+<p>We are now ready to write the test</p>
+
+<p>``` python
+from django.test import TestCase
+from mock import Mock
+from .cart import CartMiddleware, Cart</p>
+
+<p>class CartMiddlewareTest(TestCase):</p>
+
+<pre><code>def setUp(self):
+    self.cm = CartMiddleware()
+    self.request = Mock()
+    self.request.session = {}
+</code></pre>
+
+<p>```</p>
+
+<p>This sets up an instance of CartMiddleware and mocks a request. I'm using Michael Foord's <code>mock</code> library to assist me with this. Since we know <code>session</code> is a dictionary like object, we can mock it with an empty dictionary for now.</p>
+
+<p>``` python</p>
+
+<pre><code>def test_process_request_without_cart(self):
+    self.assertEqual(self.cm.process_request(self.request), None)
+    self.assertIsInstance(self.request.cart, Cart)
+
+def test_process_request_with_cart(self):
+    data = {'postcode': '3050'}
+    self.request.session = {'cart': data}
+    self.assertEqual(self.cm.process_request(self.request), None)
+    self.assertIsInstance(self.request.cart, Cart)
+    self.assertEqual(self.request.cart.postcode, data['postcode'])
+</code></pre>
+
+<p>```</p>
+
+<p><strong>The first test asserts that (without a cart in the session):</strong><br/>
+- process_request returns None<br/>
+- Cart object has been attached to request as an attribute</p>
+
+<p><strong>The second test asserts that (with a cart in the session):</strong><br/>
+- process_request returns None<br/>
+- Dictionary containing cart attributes in <code>session</code> is unpacked and used to create a Cart object.<br/>
+- The cart attribute (postcode in this case) can be accessed</p>
+
+<p><strong>Conclusion</strong><br/>
+As you could see, I didn't have to use <code>django.test.client.Client</code> to create requests, responses or sessions. When writing unit tests, one shouldn't care much about creating a precise dependency because, eventually what needs to be tested is the behaviour of the code and not the dependency itself. Therefore, it is more advisable to mock those dependencies in order to satisfy the conditions of the unit of code we test.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>
@@ -291,41 +383,6 @@ PonySwag.objects.get_or_create(
 <p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
 <code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
 In our case, we override <code>__missing__</code> to create a pony and store it in cache (if it doesn't exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>
-    <link href="http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe/"/>
-    <updated>2012-02-14T15:30:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe</id>
-    <content type="html"><![CDATA[<p>When using Python to automate your work, threading is one thing you need to know of. I've got into a problem with threading when parsing time. To be exact: <code>datetime.datetime.strptime()</code> function was not thread-safe. Luckily, I found a solution on <a href="http://stackoverflow.com/questions/4625149/fixed-strptime-exception-with-thread-lock-but-slows-down-the-program">StackOverflow</a>.</p>
-
-<!-- more -->
-
-
-<p>This is how the problem occurred:</p>
-
-<p>``` python
-from datetime import datetime
-import threading</p>
-
-<p>def parse_time(value):</p>
-
-<pre><code># Parse time with strptime()
-datetime.strptime(value], "%Y-%m-%d %H:%M:%S.%f")
-</code></pre>
-
-<p>t = threading.Thread(target=parse_time, args=(value))
-t.start()
-```
-Fixing it was pretty straightforward. Just make a dummy call on strptime() before creating a thread:</p>
-
-<p><code>python
-datetime.strptime("2011-04-05 18:40:58.525996", "%Y-%m-%d %H:%M:%S.%f")
-t = threading.Thread(target=format_time, args=(some_values))
-t.start()
-</code></p>
 ]]></content>
   </entry>
   
