@@ -4,7 +4,7 @@
   <title><![CDATA[Category: python | geeknam's blog]]></title>
   <link href="http://blog.namis.me/categories/python/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-05-13T04:47:35+10:00</updated>
+  <updated>2012-05-29T23:33:42+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Ngo Minh Nam]]></name>
@@ -12,6 +12,93 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Fibonacci with caching]]></title>
+    <link href="http://blog.namis.me/2012/05/29/fibonacci-with-caching/"/>
+    <updated>2012-05-29T19:21:00+10:00</updated>
+    <id>http://blog.namis.me/2012/05/29/fibonacci-with-caching</id>
+    <content type="html"><![CDATA[<p>Here is my attempt to compare the performance of <code>fibonacci</code> with different ways of caching the results.
+First implementation uses memoization decorator whereas the second one makes use of <code>defaultdict</code> for caching. You can read my previous blog <a href="/2012/02/15/python-caching-using-defaultdict/">post</a> on caching with <code>defaultdict</code>.</p>
+
+<p>``` python Fibonacci 1
+import timeit</p>
+
+<p>def memoize(function):</p>
+
+<pre><code>memo = {}
+
+def wrapper(*args):
+    if args in memo:
+        return memo[args]
+    else:
+        rv = function(*args)
+        memo[args] = rv
+        return rv
+
+return wrapper
+</code></pre>
+
+<p>@memoize
+def fib(num):</p>
+
+<pre><code>if num == 0:
+    return 0
+elif num == 1:
+    return 1
+else:
+    return fib(num - 1) + fib(num - 2)
+</code></pre>
+
+<p>t = timeit.Timer(stmt="fib(150)", setup="from <strong>main</strong> import fib")
+print t.timeit()</p>
+
+<h1>Approximate Result: 0.482068061829 seconds</h1>
+
+<p>```</p>
+
+<!-- more -->
+
+
+<p>``` python Fibonacci 2
+from collections import defaultdict
+import timeit</p>
+
+<p>class FibCache(defaultdict):</p>
+
+<pre><code>def __init__(self, fn):
+    self.fn = fn
+
+def __missing__(self, num):
+    self[num] = self.fn(num, self)
+    return self[num]
+</code></pre>
+
+<p>def fib(num, cache):</p>
+
+<pre><code>if num == 0:
+    return 0
+elif num == 1:
+    return 1
+else:
+    return cache[num - 1] + cache[num - 2]
+</code></pre>
+
+<p>fib_cache = FibCache(fib)</p>
+
+<p>t = timeit.Timer(stmt="fib_cache[150]", setup="from <strong>main</strong> import fib_cache")
+print t.timeit()</p>
+
+<h1>Approximate Result: 0.268569946289 seconds</h1>
+
+<p>```
+<strong>Note</strong>: Default number of loops for timeit is 1000000</p>
+
+<p>If you're looking to hire a Python programmer, this would be a great programming question. Challenge all the candidates to write the fastest fibonacci function. Hire the one whose code is the fastest.</p>
+
+<p>Feel free to suggest better/faster implementations if you know any, I'd be glad to add more to the collection.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Writing unit tests for Django middleware]]></title>
@@ -301,88 +388,6 @@ elif pet_class_name is 'snake':
 
 <p>django.magic_power()
 ```</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Python caching using defaultdict]]></title>
-    <link href="http://blog.namis.me/2012/02/15/python-caching-using-defaultdict/"/>
-    <updated>2012-02-15T10:46:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/15/python-caching-using-defaultdict</id>
-    <content type="html"><![CDATA[<p>Today, I've learnt about <code>defaultdict</code> container from my colleague, who uses it for caching. <code>defaultdict</code> container is part of <code>collections</code> module which provides high-performance container datatypes.
-You can find more about it <a href="http://docs.python.org/library/collections.html#collections.defaultdict">here</a>. <strong>Note</strong>: New in version 2.5.</p>
-
-<!-- more -->
-
-
-<p>Let's see the code without caching mechanism:</p>
-
-<p>``` python
-import csv
-from models import Pony, PonySwag</p>
-
-<h1>Getting some data from csv file</h1>
-
-<p>swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')</p>
-
-<p>for swag in swags:</p>
-
-<pre><code># Get or create a pony
-pony = Pony.objects.get_or_create(
-    name=swag['pony_name']
-)[0]
-
-# Create pony swag which belongs to a pony
-PonySwag.objects.get_or_create(
-    name=swag['swag_name'],
-    power=swag['swag_power'],
-    pony=pony 
-)[0]
-</code></pre>
-
-<p>```</p>
-
-<p>In this scenario, for every entry in csv, the code hits the database to get a pony (based on the name) to assign it to a corresponding swag. Now if we cache the created ponies, we would not have
-to query the database anymore.</p>
-
-<p>``` python
-import csv
-from collections import defaultdict
-from models import Pony, PonySwag</p>
-
-<p>class PoniesCache(defaultdict):</p>
-
-<pre><code># If dict lookup fails this will be called
-def __missing__(self, key):
-    # Insert a pony in cache dict and return it
-    pony = Pony.objects.get_or_create(name=key)[0]
-    self[key] = pony
-    return pony
-</code></pre>
-
-<p>ponies_cache = PoniesCache()</p>
-
-<h1>Getting some data from csv file</h1>
-
-<p>swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')</p>
-
-<p>for swag in swags:</p>
-
-<pre><code>pony = ponies_cache[swag['pony_name']]
-
-# Create pony swag which belongs to a pony
-PonySwag.objects.get_or_create(
-    name=swag['swag_name'],
-    power=swag['swag_power'],
-    pony=pony 
-)[0]
-</code></pre>
-
-<p>```</p>
-
-<p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
-<code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
-In our case, we override <code>__missing__</code> to create a pony and store it in cache (if it doesn't exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
 ]]></content>
   </entry>
   

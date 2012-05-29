@@ -9,9 +9,7 @@
   <meta name="author" content="Ngo Minh Nam">
 
   
-  <meta name="description" content="Hey there! This is my new blog powered by Octropress and hosted on Github.
-Octopress was exactly what I was looking for in a blog engine
-(Yes, code &hellip;">
+  <meta name="description" content="When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +77,45 @@ Octopress was exactly what I was looking for in a blog engine
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/02/13/loading-fixtures-in-django-tests/">Loading Fixtures in Django Tests</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-13T14:22:00+11:00" pubdate data-updated="true">Feb 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a GlobalSetup class that other tests should inherit from (it&#8217;s located at the project level). However, this approach creates a problem with loading fixtures. According to Django <a href="https://docs.djangoproject.com/en/dev/topics/testing/">docs</a>: </div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/2012/02/13/loading-fixtures-in-django-tests/">Read more &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -585,6 +622,10 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2012/05/29/fibonacci-with-caching/">Fibonacci with caching</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/05/13/writing-unit-tests-for-django-middleware/">Writing unit tests for Django middleware</a>
       </li>
     
@@ -598,10 +639,6 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
     
       <li class="post">
         <a href="/2012/02/16/python-class-factory/">Python class factory</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/15/python-caching-using-defaultdict/">Python caching using defaultdict</a>
       </li>
     
   </ul>
