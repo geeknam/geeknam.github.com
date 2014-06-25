@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: blog | Nam Ngo's blog]]></title>
+  <title><![CDATA[Category: Blog | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/blog/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2014-06-25T23:37:24+10:00</updated>
+  <updated>2014-06-26T00:59:36+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Nam Ngo]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[First post from Octopress]]></title>
+    <title type="html"><![CDATA[First Post From Octopress]]></title>
     <link href="http://blog.namis.me/2012/02/11/first-post-from-octopress/"/>
     <updated>2012-02-11T21:42:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/11/first-post-from-octopress</id>

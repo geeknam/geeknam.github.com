@@ -4,7 +4,7 @@
   <title><![CDATA[Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2014-06-25T23:37:24+10:00</updated>
+  <updated>2014-06-26T00:59:36+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Nam Ngo]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Fibonacci with caching]]></title>
+    <title type="html"><![CDATA[Fibonacci With Caching]]></title>
     <link href="http://blog.namis.me/2012/05/29/fibonacci-with-caching/"/>
     <updated>2012-05-29T19:21:00+10:00</updated>
     <id>http://blog.namis.me/2012/05/29/fibonacci-with-caching</id>
@@ -157,7 +157,7 @@ First implementation uses memoization decorator whereas the second one makes use
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Writing unit tests for Django middleware]]></title>
+    <title type="html"><![CDATA[Writing Unit Tests for Django Middleware]]></title>
     <link href="http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware/"/>
     <updated>2012-05-13T02:21:00+10:00</updated>
     <id>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware</id>
@@ -275,7 +275,7 @@ As you could see, I didn&#8217;t have to use <code>django.test.client.Client</co
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Burn your fixtures, use model factories]]></title>
+    <title type="html"><![CDATA[Burn Your Fixtures, Use Model Factories]]></title>
     <link href="http://blog.namis.me/2012/04/21/burn-your-fixtures/"/>
     <updated>2012-04-21T16:46:00+10:00</updated>
     <id>http://blog.namis.me/2012/04/21/burn-your-fixtures</id>
@@ -331,7 +331,7 @@ As you could see, I didn&#8217;t have to use <code>django.test.client.Client</co
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Django custom email form field for Email Pie]]></title>
+    <title type="html"><![CDATA[Django Custom Email Form Field for Email Pie]]></title>
     <link href="http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie/"/>
     <updated>2012-03-27T01:14:00+11:00</updated>
     <id>http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie</id>
@@ -450,7 +450,7 @@ Email Pie is a wonderful little JSON API that gives you a simple way to validate
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Python class factory]]></title>
+    <title type="html"><![CDATA[Python Class Factory]]></title>
     <link href="http://blog.namis.me/2012/02/16/python-class-factory/"/>
     <updated>2012-02-16T12:05:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/16/python-class-factory</id>
@@ -549,7 +549,7 @@ This design pattern allows you to create objects without specifying the exact cl
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Python caching using defaultdict]]></title>
+    <title type="html"><![CDATA[Python Caching Using Defaultdict]]></title>
     <link href="http://blog.namis.me/2012/02/15/python-caching-using-defaultdict/"/>
     <updated>2012-02-15T10:46:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/15/python-caching-using-defaultdict</id>
@@ -665,7 +665,7 @@ In our case, we override <code>__missing__</code> to create a pony and store it 
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Python strptime is not thread-safe]]></title>
+    <title type="html"><![CDATA[Python Strptime Is Not Thread-safe]]></title>
     <link href="http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe/"/>
     <updated>2012-02-14T15:30:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/14/python-strptime-is-not-thread-safe</id>
@@ -929,7 +929,7 @@ I&#8217;ve been trying to limit myself to use class based generic views as much 
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Django dynamic unsubscribe forms]]></title>
+    <title type="html"><![CDATA[Django Dynamic Unsubscribe Forms]]></title>
     <link href="http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms/"/>
     <updated>2012-02-13T15:40:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/13/django-dynamic-unsubscribe-forms</id>
@@ -1065,7 +1065,7 @@ I&#8217;ve been trying to limit myself to use class based generic views as much 
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Loading fixtures in Django tests]]></title>
+    <title type="html"><![CDATA[Loading Fixtures in Django Tests]]></title>
     <link href="http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests/"/>
     <updated>2012-02-13T14:22:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/13/loading-fixtures-in-django-tests</id>
@@ -1143,7 +1143,7 @@ Hope this will help you to DRY up your tests.</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[First post from Octopress]]></title>
+    <title type="html"><![CDATA[First Post From Octopress]]></title>
     <link href="http://blog.namis.me/2012/02/11/first-post-from-octopress/"/>
     <updated>2012-02-11T21:42:00+11:00</updated>
     <id>http://blog.namis.me/2012/02/11/first-post-from-octopress</id>
@@ -1157,7 +1157,7 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Fabric deployment]]></title>
+    <title type="html"><![CDATA[Fabric Deployment]]></title>
     <link href="http://blog.namis.me/2011/11/12/fabric-deployment/"/>
     <updated>2011-11-12T13:28:00+11:00</updated>
     <id>http://blog.namis.me/2011/11/12/fabric-deployment</id>
@@ -1173,7 +1173,7 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Fatal error: Call to undefined function _make_cat_compat()]]></title>
+    <title type="html"><![CDATA[Fatal Error: Call to Undefined Function _make_cat_compat()]]></title>
     <link href="http://blog.namis.me/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat/"/>
     <updated>2011-11-05T13:23:00+11:00</updated>
     <id>http://blog.namis.me/2011/11/05/fatal-error-call-to-undefined-function-make-cat-compat</id>
@@ -1255,7 +1255,7 @@ focus on writing about Python and Django in this one. That&#8217;s about it, sta
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Using PHP to parse git history]]></title>
+    <title type="html"><![CDATA[Using PHP to Parse Git History]]></title>
     <link href="http://blog.namis.me/2011/05/08/using-php-to-parse-git-history/"/>
     <updated>2011-05-08T13:19:00+10:00</updated>
     <id>http://blog.namis.me/2011/05/08/using-php-to-parse-git-history</id>
@@ -1361,7 +1361,7 @@ sender of a message but instead it returned an IM formatted string. Here is how 
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Fix screwed up keyboard layout on Ubuntu 9.04]]></title>
+    <title type="html"><![CDATA[Fix Screwed Up Keyboard Layout on Ubuntu 9.04]]></title>
     <link href="http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04/"/>
     <updated>2010-12-05T13:34:00+11:00</updated>
     <id>http://blog.namis.me/2010/12/05/fix-screwed-up-keyboard-layout-on-ubuntu-9-dot-04</id>
@@ -1424,7 +1424,7 @@ stuff like:</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Simple web service with Google App Engine]]></title>
+    <title type="html"><![CDATA[Simple Web Service With Google App Engine]]></title>
     <link href="http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine/"/>
     <updated>2010-06-13T13:44:00+10:00</updated>
     <id>http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine</id>
