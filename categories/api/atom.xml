@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: api | geeknam's blog]]></title>
+  <title><![CDATA[Category: api | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/api/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-09-12T01:05:11+10:00</updated>
+  <updated>2014-06-25T23:37:24+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
-    <name><![CDATA[Ngo Minh Nam]]></name>
+    <name><![CDATA[Nam Ngo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -23,57 +23,49 @@
 <!-- more -->
 
 
-<p>``` python
-from django.db import models
-from datetime import datetime, timedelta</p>
+<pre><code class="python">from django.db import models
+from datetime import datetime, timedelta
 
-<p>class AuthToken(models.Model):</p>
+class AuthToken(models.Model):
+    token = models.TextField()
+    last_updated = models.DateTimeField(auto_now_add=True)
 
-<pre><code>token = models.TextField()
-last_updated = models.DateTimeField(auto_now_add=True)
+    def token_update(self):
+        # Check if the token's lifespan is more than n days (n=1 in this case)
+        # You can adjust n value to whatever you want
 
-def token_update(self):
-    # Check if the token's lifespan is more than n days (n=1 in this case)
-    # You can adjust n value to whatever you want
-
-    if datetime.now() - self.last_updated &gt; timedelta(days=1):
-        return True
-    return False
+        if datetime.now() - self.last_updated &gt; timedelta(days=1):
+            return True
+        return False
 </code></pre>
-
-<p>```</p>
 
 <p>Now let's write a function that regenerates AuthToken and saves it back to database.</p>
 
-<p>```python
-from models import AuthToken</p>
+<pre><code class="python">from models import AuthToken
 
-<p>CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'</p>
+CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'
 
-<p>def regenerate_authtoken():</p>
+def regenerate_authtoken():
+    auth_token = AuthToken.objects.all()[0]
+    if auth_token.token_update():
+        data = urllib.urlencode(
+            {
+                'Email': 'youremail@gmail.com',
+                'Passwd': 'yourpassword',
+                'service': 'service_name',
+                'accountType': 'GOOGLE'
+            }
+        )
+        req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
+        resp = urllib2.urlopen(req)
+        resp_body = resp.read()
 
-<pre><code>auth_token = AuthToken.objects.all()[0]
-if auth_token.token_update():
-    data = urllib.urlencode(
-        {
-            'Email': 'youremail@gmail.com',
-            'Passwd': 'yourpassword',
-            'service': 'service_name',
-            'accountType': 'GOOGLE'
-        }
-    )
-    req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
-    resp = urllib2.urlopen(req)
-    resp_body = resp.read()
-
-    resp_dict = dict(
-        x.split('=') for x in resp_body.split('\n') if x
-    )
-    auth_token.token = resp_dict['Auth']
-    auth_token.save()
+        resp_dict = dict(
+            x.split('=') for x in resp_body.split('\n') if x
+        )
+        auth_token.token = resp_dict['Auth']
+        auth_token.save()
 </code></pre>
-
-<p>```</p>
 
 <p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
 ]]></content>

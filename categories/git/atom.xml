@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: git | geeknam's blog]]></title>
+  <title><![CDATA[Category: git | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/git/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-09-12T01:05:11+10:00</updated>
+  <updated>2014-06-25T23:37:24+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
-    <name><![CDATA[Ngo Minh Nam]]></name>
+    <name><![CDATA[Nam Ngo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -20,41 +20,37 @@
     <id>http://blog.namis.me/2011/05/08/using-php-to-parse-git-history</id>
     <content type="html"><![CDATA[<p>Here is how you can store git command output in a good manner after which you will be able to easily retrieve necessary information. This snippet belongs to the project I'm currently working on.</p>
 
-<p>``` php
-&lt;?php
-// Author: Ngo Minh Nam</p>
+<pre><code class="php">&lt;?php
+// Author: Ngo Minh Nam
 
-<p>$dir = "/path/to/your/repo/";
+$dir = "/path/to/your/repo/";
 $output = array();
 chdir($dir);
 exec("git log",$output);
 $history = array();
-foreach($output as $line){</p>
-
-<pre><code>if(strpos($line, 'commit')===0){
-    if(!empty($commit)){
-        array_push($history, $commit);  
-        unset($commit);
+foreach($output as $line){
+    if(strpos($line, 'commit')===0){
+        if(!empty($commit)){
+            array_push($history, $commit);  
+            unset($commit);
+        }
+        $commit['hash']   = substr($line, strlen('commit'));
     }
-    $commit['hash']   = substr($line, strlen('commit'));
+    else if(strpos($line, 'Author')===0){
+        $commit['author'] = substr($line, strlen('Author:'));
+    }
+    else if(strpos($line, 'Date')===0){
+        $commit['date']   = substr($line, strlen('Date:'));
+    }
+    else{       
+        $commit['message']  .= $line;
+    }
 }
-else if(strpos($line, 'Author')===0){
-    $commit['author'] = substr($line, strlen('Author:'));
-}
-else if(strpos($line, 'Date')===0){
-    $commit['date']   = substr($line, strlen('Date:'));
-}
-else{       
-    $commit['message']  .= $line;
-}
+
+print_r($history);
+
+?&gt;
 </code></pre>
-
-<p>}</p>
-
-<p>print_r($history);</p>
-
-<p>?>
-```</p>
 ]]></content>
   </entry>
   

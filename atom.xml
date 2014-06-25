@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[geeknam's blog]]></title>
+  <title><![CDATA[Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-09-12T01:05:11+10:00</updated>
+  <updated>2014-06-25T23:37:24+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
-    <name><![CDATA[Ngo Minh Nam]]></name>
+    <name><![CDATA[Nam Ngo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>

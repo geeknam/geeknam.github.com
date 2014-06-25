@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: python | geeknam's blog]]></title>
+  <title><![CDATA[Category: python | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/python/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-09-12T01:05:11+10:00</updated>
+  <updated>2014-06-25T23:37:24+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
-    <name><![CDATA[Ngo Minh Nam]]></name>
+    <name><![CDATA[Nam Ngo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -21,78 +21,72 @@
     <content type="html"><![CDATA[<p>Here is my attempt to compare the performance of <code>fibonacci</code> with different ways of caching the results.
 First implementation uses memoization decorator whereas the second one makes use of <code>defaultdict</code> for caching. You can read my previous blog <a href="/2012/02/15/python-caching-using-defaultdict/">post</a> on caching with <code>defaultdict</code>.</p>
 
-<p>``` python Fibonacci 1
-import timeit</p>
+<pre><code class="python Fibonacci 1">import timeit
 
-<p>def memoize(function):</p>
+def memoize(function):
+    memo = {}
 
-<pre><code>memo = {}
+    def wrapper(*args):
+        if args in memo:
+            return memo[args]
+        else:
+            rv = function(*args)
+            memo[args] = rv
+            return rv
 
-def wrapper(*args):
-    if args in memo:
-        return memo[args]
+    return wrapper
+
+
+@memoize
+def fib(num):
+    if num == 0:
+        return 0
+    elif num == 1:
+        return 1
     else:
-        rv = function(*args)
-        memo[args] = rv
-        return rv
+        return fib(num - 1) + fib(num - 2)
 
-return wrapper
+
+t = timeit.Timer(stmt="fib(150)", setup="from __main__ import fib")
+print t.timeit()
+
+# Approximate Result: 0.482068061829 seconds
 </code></pre>
-
-<p>@memoize
-def fib(num):</p>
-
-<pre><code>if num == 0:
-    return 0
-elif num == 1:
-    return 1
-else:
-    return fib(num - 1) + fib(num - 2)
-</code></pre>
-
-<p>t = timeit.Timer(stmt="fib(150)", setup="from <strong>main</strong> import fib")
-print t.timeit()</p>
-
-<h1>Approximate Result: 0.482068061829 seconds</h1>
-
-<p>```</p>
 
 <!-- more -->
 
 
-<p>``` python Fibonacci 2
-from collections import defaultdict
-import timeit</p>
+<pre><code class="python Fibonacci 2">from collections import defaultdict
+import timeit
 
-<p>class FibCache(defaultdict):</p>
+class FibCache(defaultdict):
 
-<pre><code>def __init__(self, fn):
-    self.fn = fn
+    def __init__(self, fn):
+        self.fn = fn
 
-def __missing__(self, num):
-    self[num] = self.fn(num, self)
-    return self[num]
+    def __missing__(self, num):
+        self[num] = self.fn(num, self)
+        return self[num]
+
+
+def fib(num, cache):
+    if num == 0:
+        return 0
+    elif num == 1:
+        return 1
+    else:
+        return cache[num - 1] + cache[num - 2]
+
+
+fib_cache = FibCache(fib)
+
+t = timeit.Timer(stmt="fib_cache[150]", setup="from __main__ import fib_cache")
+print t.timeit()
+
+# Approximate Result: 0.268569946289 seconds
 </code></pre>
 
-<p>def fib(num, cache):</p>
-
-<pre><code>if num == 0:
-    return 0
-elif num == 1:
-    return 1
-else:
-    return cache[num - 1] + cache[num - 2]
-</code></pre>
-
-<p>fib_cache = FibCache(fib)</p>
-
-<p>t = timeit.Timer(stmt="fib_cache[150]", setup="from <strong>main</strong> import fib_cache")
-print t.timeit()</p>
-
-<h1>Approximate Result: 0.268569946289 seconds</h1>
-
-<p>```
-<strong>Note</strong>: Default number of loops for timeit is 1000000</p>
+<p><strong>Note</strong>: Default number of loops for timeit is 1000000</p>
 
 <p>If you're looking to hire a Python programmer, this would be a great programming question. Challenge all the candidates to write the fastest fibonacci function. Hire the one whose code is the fastest.</p>
 
@@ -107,25 +101,21 @@ print t.timeit()</p>
     <id>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware</id>
     <content type="html"><![CDATA[<p>Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of the scenarios is testing middleware. Let's take a look at this middleware.</p>
 
-<p>``` python
-from .cart import Cart</p>
+<pre><code class="python">from .cart import Cart
 
-<p>class CartMiddleware:</p>
+class CartMiddleware:
+    def process_request(self, request):
+        '''Load the current cart from the session, or create a new one'''
+        cart = request.session.get('cart', None)
 
-<pre><code>def process_request(self, request):
-    '''Load the current cart from the session, or create a new one'''
-    cart = request.session.get('cart', None)
+        if cart is None:
+            cart = Cart()
+        else:
+            cart = Cart(**cart)
 
-    if cart is None:
-        cart = Cart()
-    else:
-        cart = Cart(**cart)
-
-    setattr(request, 'cart', cart)
-    return None
+        setattr(request, 'cart', cart)
+        return None
 </code></pre>
-
-<p>```</p>
 
 <!-- more -->
 
@@ -145,38 +135,31 @@ from .cart import Cart</p>
 
 <p>We are now ready to write the test</p>
 
-<p>``` python
-from django.test import TestCase
+<pre><code class="python">from django.test import TestCase
 from mock import Mock
-from .cart import CartMiddleware, Cart</p>
+from .cart import CartMiddleware, Cart
 
-<p>class CartMiddlewareTest(TestCase):</p>
+class CartMiddlewareTest(TestCase):
 
-<pre><code>def setUp(self):
-    self.cm = CartMiddleware()
-    self.request = Mock()
-    self.request.session = {}
+    def setUp(self):
+        self.cm = CartMiddleware()
+        self.request = Mock()
+        self.request.session = {}
 </code></pre>
-
-<p>```</p>
 
 <p>This sets up an instance of CartMiddleware and mocks a request. I'm using Michael Foord's <code>mock</code> library to assist me with this. Since we know <code>session</code> is a dictionary like object, we can mock it with an empty dictionary for now.</p>
 
-<p>``` python</p>
+<pre><code class="python ">    def test_process_request_without_cart(self):
+        self.assertEqual(self.cm.process_request(self.request), None)
+        self.assertIsInstance(self.request.cart, Cart)
 
-<pre><code>def test_process_request_without_cart(self):
-    self.assertEqual(self.cm.process_request(self.request), None)
-    self.assertIsInstance(self.request.cart, Cart)
-
-def test_process_request_with_cart(self):
-    data = {'postcode': '3050'}
-    self.request.session = {'cart': data}
-    self.assertEqual(self.cm.process_request(self.request), None)
-    self.assertIsInstance(self.request.cart, Cart)
-    self.assertEqual(self.request.cart.postcode, data['postcode'])
+    def test_process_request_with_cart(self):
+        data = {'postcode': '3050'}
+        self.request.session = {'cart': data}
+        self.assertEqual(self.cm.process_request(self.request), None)
+        self.assertIsInstance(self.request.cart, Cart)
+        self.assertEqual(self.request.cart.postcode, data['postcode'])
 </code></pre>
-
-<p>```</p>
 
 <p><strong>The first test asserts that (without a cart in the session):</strong><br/>
 - process_request returns None<br/>
@@ -208,33 +191,25 @@ As you could see, I didn't have to use <code>django.test.client.Client</code> to
 
 <p>Here is an example of a model factory that was used in the talk:</p>
 
-<p>``` python
-def create_profile(**kwargs):</p>
-
-<pre><code>defaults = {
-    "likes_cheese": True,
-    "age": 32,
-    "address": "3815 Brookside Dr",
-}
-defaults.update(kwargs)
-if "user" not in defaults:
-    defaults["user"] = create_user()
-return Profile.objects.create(**defaults)
+<pre><code class="python">def create_profile(**kwargs):
+    defaults = {
+        "likes_cheese": True,
+        "age": 32,
+        "address": "3815 Brookside Dr",
+    }
+    defaults.update(kwargs)
+    if "user" not in defaults:
+        defaults["user"] = create_user()
+    return Profile.objects.create(**defaults)
 </code></pre>
-
-<p>```</p>
 
 <p>And this is how you could use it in the test:</p>
 
-<p>``` python
-def test_can_vote(self):</p>
-
-<pre><code>"""A user age 18+ can vote in the US."""
-profile = create_profile(age=18)
-self.assertTrue(profile.can_vote)
+<pre><code class="python">def test_can_vote(self):
+    """A user age 18+ can vote in the US."""
+    profile = create_profile(age=18)
+    self.assertTrue(profile.can_vote)
 </code></pre>
-
-<p>```</p>
 
 <p>This approach solves the problem with maintaining the fixtures to suit your model design. If your model changes, the only thing you have to edit is the default values of the factory. Therefore <code>model factories</code> are way easier to maintain. If you need a large data set, you could easily write a for loop that wraps the model factory. So burn all your fixture right now !!!</p>
 ]]></content>
@@ -254,70 +229,61 @@ Email Pie is a wonderful little JSON API that gives you a simple way to validate
 
 <p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
 
-<p>``` python fields.py
-import requests
-import simplejson</p>
+<pre><code class="python fields.py">import requests
+import simplejson
 
-<p>from django import forms
-from django.core.exceptions import ValidationError</p>
+from django import forms
+from django.core.exceptions import ValidationError
 
-<p>EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance</p>
 
-<p>def validate_email_pie(value):</p>
+EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance
 
-<pre><code>params = {'email': value}
-response = requests.get('%s/v1/check' % EMAIL_PIE_HOST, params=params)
-response = simplejson.loads(response.content)
+def validate_email_pie(value):
+    params = {'email': value}
+    response = requests.get('%s/v1/check' % EMAIL_PIE_HOST, params=params)
+    response = simplejson.loads(response.content)
 
-if not response['success']:
-    raise ValidationError(response['errors'][0]['message'])
+    if not response['success']:
+        raise ValidationError(response['errors'][0]['message'])
+
+
+class EmailPieField(forms.EmailField):
+    default_validators = [validate_email_pie]
 </code></pre>
-
-<p>class EmailPieField(forms.EmailField):</p>
-
-<pre><code>default_validators = [validate_email_pie]
-</code></pre>
-
-<p>```</p>
 
 <p><code>validate_email_pie</code> method makes GET request to Email Pie and gets back a response. The service checks for email format and mx records, it also catches misspellings (you can get it with <code>response['didyoumean']</code>). <code>validate_email_pie</code> raises <code>ValidationError</code> if the service detects an invalid email address. Now in your forms you can use <code>EmailPieField</code> like this:</p>
 
-<p>``` python forms.py
-from django import forms
-from .fields import EmailPieField</p>
+<pre><code class="python forms.py">from django import forms
+from .fields import EmailPieField
 
-<p>class ContactForm(forms.Form):</p>
-
-<pre><code>name = forms.CharField()
-email = EmailPieField()
+class ContactForm(forms.Form):
+    name = forms.CharField()
+    email = EmailPieField()
 </code></pre>
-
-<p>```</p>
 
 <p>For those interested, here are some tests for the field :)</p>
 
-<p>``` python tests.py
-from django.test import TestCase
+<pre><code class="python tests.py">from django.test import TestCase
 from django.core.exceptions import ValidationError
-from .fields import EmailPieField</p>
+from .fields import EmailPieField
 
-<p>class EmailPieFieldTest(TestCase):</p>
 
-<pre><code>def test_invalid_email(self):
-    email_field = EmailPieField()
-    self.assertRaises(ValidationError, email_field.clean, 'email@totest')
+class EmailPieFieldTest(TestCase):
 
-def test_invalid_mx(self):
-    email_field = EmailPieField()
-    self.assertRaises(ValidationError, email_field.clean, 'email@totest.com')
+    def test_invalid_email(self):
+        email_field = EmailPieField()
+        self.assertRaises(ValidationError, email_field.clean, 'email@totest')
 
-def test_valid_email(self):
-    email_field = EmailPieField()
-    self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
+    def test_invalid_mx(self):
+        email_field = EmailPieField()
+        self.assertRaises(ValidationError, email_field.clean, 'email@totest.com')
+
+    def test_valid_email(self):
+        email_field = EmailPieField()
+        self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
 </code></pre>
 
-<p>```
-</span></p>
+<p></span></p>
 ]]></content>
   </entry>
   
@@ -334,60 +300,48 @@ This design pattern allows you to create objects without specifying the exact cl
 <!-- more -->
 
 
-<p>``` python
-class Pony(object):</p>
+<pre><code class="python">class Pony(object):
 
-<pre><code>def __init__(self, name):
-    self.name = name
-    self.hp = 100
+    def __init__(self, name):
+        self.name = name
+        self.hp = 100
 
-def magic_power(self):
-    # Attack opponent with super powers
-    pass
+    def magic_power(self):
+        # Attack opponent with super powers
+        pass
 
-def heal(self):
-    # Increase hp (health point)
+    def heal(self):
+        # Increase hp (health point)
+        pass
+
+class Snake(object):
+    # Blah blah same as Pony
     pass
 </code></pre>
-
-<p>class Snake(object):</p>
-
-<pre><code># Blah blah same as Pony
-pass
-</code></pre>
-
-<p>```</p>
 
 <p>Let's write a factory method to make this happen:</p>
 
-<p>``` python
-def create_class(pet_class_name):</p>
+<pre><code class="python">def create_class(pet_class_name):
+    # pet_class_name decides what class will be returned
+    if pet_class_name is 'pony':
+        class InheritedClass(Pony):
+            # You can add additional methods or attributes if needed
+            pass
+        return InheritedClass
+    elif pet_class_name is 'snake':
+        # Or you can return the exact class
+        return Snake
 
-<pre><code># pet_class_name decides what class will be returned
-if pet_class_name is 'pony':
-    class InheritedClass(Pony):
-        # You can add additional methods or attributes if needed
-        pass
-    return InheritedClass
-elif pet_class_name is 'snake':
-    # Or you can return the exact class
-    return Snake
+# Create MyPet from a string
+MyPet = create_class('pony')
+
+# MyPet is now a subclass of Pony
+# It inherits everything from Pony
+django = MyPet('django')
+
+# Kaboom !!!
+django.magic_power()
 </code></pre>
-
-<h1>Create MyPet from a string</h1>
-
-<p>MyPet = create_class('pony')</p>
-
-<h1>MyPet is now a subclass of Pony</h1>
-
-<h1>It inherits everything from Pony</h1>
-
-<p>django = MyPet('django')</p>
-
-<h1>Kaboom !!!</h1>
-
-<p>django.magic_power()
-```</p>
 ]]></content>
   </entry>
   

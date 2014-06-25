@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: django | geeknam's blog]]></title>
+  <title><![CDATA[Category: django | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-09-12T01:05:11+10:00</updated>
+  <updated>2014-06-25T23:37:24+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
-    <name><![CDATA[Ngo Minh Nam]]></name>
+    <name><![CDATA[Nam Ngo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -20,25 +20,21 @@
     <id>http://blog.namis.me/2012/05/13/writing-unit-tests-for-django-middleware</id>
     <content type="html"><![CDATA[<p>Sometimes, it is a pain in the ass to write tests for Django apps (even though Django provides some pretty awesome testing tools out of box). One of the scenarios is testing middleware. Let's take a look at this middleware.</p>
 
-<p>``` python
-from .cart import Cart</p>
+<pre><code class="python">from .cart import Cart
 
-<p>class CartMiddleware:</p>
+class CartMiddleware:
+    def process_request(self, request):
+        '''Load the current cart from the session, or create a new one'''
+        cart = request.session.get('cart', None)
 
-<pre><code>def process_request(self, request):
-    '''Load the current cart from the session, or create a new one'''
-    cart = request.session.get('cart', None)
+        if cart is None:
+            cart = Cart()
+        else:
+            cart = Cart(**cart)
 
-    if cart is None:
-        cart = Cart()
-    else:
-        cart = Cart(**cart)
-
-    setattr(request, 'cart', cart)
-    return None
+        setattr(request, 'cart', cart)
+        return None
 </code></pre>
-
-<p>```</p>
 
 <!-- more -->
 
@@ -58,38 +54,31 @@ from .cart import Cart</p>
 
 <p>We are now ready to write the test</p>
 
-<p>``` python
-from django.test import TestCase
+<pre><code class="python">from django.test import TestCase
 from mock import Mock
-from .cart import CartMiddleware, Cart</p>
+from .cart import CartMiddleware, Cart
 
-<p>class CartMiddlewareTest(TestCase):</p>
+class CartMiddlewareTest(TestCase):
 
-<pre><code>def setUp(self):
-    self.cm = CartMiddleware()
-    self.request = Mock()
-    self.request.session = {}
+    def setUp(self):
+        self.cm = CartMiddleware()
+        self.request = Mock()
+        self.request.session = {}
 </code></pre>
-
-<p>```</p>
 
 <p>This sets up an instance of CartMiddleware and mocks a request. I'm using Michael Foord's <code>mock</code> library to assist me with this. Since we know <code>session</code> is a dictionary like object, we can mock it with an empty dictionary for now.</p>
 
-<p>``` python</p>
+<pre><code class="python ">    def test_process_request_without_cart(self):
+        self.assertEqual(self.cm.process_request(self.request), None)
+        self.assertIsInstance(self.request.cart, Cart)
 
-<pre><code>def test_process_request_without_cart(self):
-    self.assertEqual(self.cm.process_request(self.request), None)
-    self.assertIsInstance(self.request.cart, Cart)
-
-def test_process_request_with_cart(self):
-    data = {'postcode': '3050'}
-    self.request.session = {'cart': data}
-    self.assertEqual(self.cm.process_request(self.request), None)
-    self.assertIsInstance(self.request.cart, Cart)
-    self.assertEqual(self.request.cart.postcode, data['postcode'])
+    def test_process_request_with_cart(self):
+        data = {'postcode': '3050'}
+        self.request.session = {'cart': data}
+        self.assertEqual(self.cm.process_request(self.request), None)
+        self.assertIsInstance(self.request.cart, Cart)
+        self.assertEqual(self.request.cart.postcode, data['postcode'])
 </code></pre>
-
-<p>```</p>
 
 <p><strong>The first test asserts that (without a cart in the session):</strong><br/>
 - process_request returns None<br/>
@@ -121,33 +110,25 @@ As you could see, I didn't have to use <code>django.test.client.Client</code> to
 
 <p>Here is an example of a model factory that was used in the talk:</p>
 
-<p>``` python
-def create_profile(**kwargs):</p>
-
-<pre><code>defaults = {
-    "likes_cheese": True,
-    "age": 32,
-    "address": "3815 Brookside Dr",
-}
-defaults.update(kwargs)
-if "user" not in defaults:
-    defaults["user"] = create_user()
-return Profile.objects.create(**defaults)
+<pre><code class="python">def create_profile(**kwargs):
+    defaults = {
+        "likes_cheese": True,
+        "age": 32,
+        "address": "3815 Brookside Dr",
+    }
+    defaults.update(kwargs)
+    if "user" not in defaults:
+        defaults["user"] = create_user()
+    return Profile.objects.create(**defaults)
 </code></pre>
-
-<p>```</p>
 
 <p>And this is how you could use it in the test:</p>
 
-<p>``` python
-def test_can_vote(self):</p>
-
-<pre><code>"""A user age 18+ can vote in the US."""
-profile = create_profile(age=18)
-self.assertTrue(profile.can_vote)
+<pre><code class="python">def test_can_vote(self):
+    """A user age 18+ can vote in the US."""
+    profile = create_profile(age=18)
+    self.assertTrue(profile.can_vote)
 </code></pre>
-
-<p>```</p>
 
 <p>This approach solves the problem with maintaining the fixtures to suit your model design. If your model changes, the only thing you have to edit is the default values of the factory. Therefore <code>model factories</code> are way easier to maintain. If you need a large data set, you could easily write a for loop that wraps the model factory. So burn all your fixture right now !!!</p>
 ]]></content>
@@ -167,70 +148,61 @@ Email Pie is a wonderful little JSON API that gives you a simple way to validate
 
 <p>Make sure you pip install <code>requests</code> and <code>simplejson</code> before proceeding. Now create a <code>fields.py</code> file with the following content:</p>
 
-<p>``` python fields.py
-import requests
-import simplejson</p>
+<pre><code class="python fields.py">import requests
+import simplejson
 
-<p>from django import forms
-from django.core.exceptions import ValidationError</p>
+from django import forms
+from django.core.exceptions import ValidationError
 
-<p>EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance</p>
 
-<p>def validate_email_pie(value):</p>
+EMAIL_PIE_HOST = 'http://emailpie.com'  # change this if you run your own instance
 
-<pre><code>params = {'email': value}
-response = requests.get('%s/v1/check' % EMAIL_PIE_HOST, params=params)
-response = simplejson.loads(response.content)
+def validate_email_pie(value):
+    params = {'email': value}
+    response = requests.get('%s/v1/check' % EMAIL_PIE_HOST, params=params)
+    response = simplejson.loads(response.content)
 
-if not response['success']:
-    raise ValidationError(response['errors'][0]['message'])
+    if not response['success']:
+        raise ValidationError(response['errors'][0]['message'])
+
+
+class EmailPieField(forms.EmailField):
+    default_validators = [validate_email_pie]
 </code></pre>
-
-<p>class EmailPieField(forms.EmailField):</p>
-
-<pre><code>default_validators = [validate_email_pie]
-</code></pre>
-
-<p>```</p>
 
 <p><code>validate_email_pie</code> method makes GET request to Email Pie and gets back a response. The service checks for email format and mx records, it also catches misspellings (you can get it with <code>response['didyoumean']</code>). <code>validate_email_pie</code> raises <code>ValidationError</code> if the service detects an invalid email address. Now in your forms you can use <code>EmailPieField</code> like this:</p>
 
-<p>``` python forms.py
-from django import forms
-from .fields import EmailPieField</p>
+<pre><code class="python forms.py">from django import forms
+from .fields import EmailPieField
 
-<p>class ContactForm(forms.Form):</p>
-
-<pre><code>name = forms.CharField()
-email = EmailPieField()
+class ContactForm(forms.Form):
+    name = forms.CharField()
+    email = EmailPieField()
 </code></pre>
-
-<p>```</p>
 
 <p>For those interested, here are some tests for the field :)</p>
 
-<p>``` python tests.py
-from django.test import TestCase
+<pre><code class="python tests.py">from django.test import TestCase
 from django.core.exceptions import ValidationError
-from .fields import EmailPieField</p>
+from .fields import EmailPieField
 
-<p>class EmailPieFieldTest(TestCase):</p>
 
-<pre><code>def test_invalid_email(self):
-    email_field = EmailPieField()
-    self.assertRaises(ValidationError, email_field.clean, 'email@totest')
+class EmailPieFieldTest(TestCase):
 
-def test_invalid_mx(self):
-    email_field = EmailPieField()
-    self.assertRaises(ValidationError, email_field.clean, 'email@totest.com')
+    def test_invalid_email(self):
+        email_field = EmailPieField()
+        self.assertRaises(ValidationError, email_field.clean, 'email@totest')
 
-def test_valid_email(self):
-    email_field = EmailPieField()
-    self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
+    def test_invalid_mx(self):
+        email_field = EmailPieField()
+        self.assertRaises(ValidationError, email_field.clean, 'email@totest.com')
+
+    def test_valid_email(self):
+        email_field = EmailPieField()
+        self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
 </code></pre>
 
-<p>```
-</span></p>
+<p></span></p>
 ]]></content>
   </entry>
   
@@ -247,68 +219,55 @@ You can find more about it <a href="http://docs.python.org/library/collections.h
 
 <p>Let's see the code without caching mechanism:</p>
 
-<p>``` python
-import csv
-from models import Pony, PonySwag</p>
+<pre><code class="python">import csv
+from models import Pony, PonySwag
 
-<h1>Getting some data from csv file</h1>
+# Getting some data from csv file
+swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')
 
-<p>swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')</p>
+for swag in swags:
+    # Get or create a pony
+    pony = Pony.objects.get_or_create(
+        name=swag['pony_name']
+    )[0]
 
-<p>for swag in swags:</p>
-
-<pre><code># Get or create a pony
-pony = Pony.objects.get_or_create(
-    name=swag['pony_name']
-)[0]
-
-# Create pony swag which belongs to a pony
-PonySwag.objects.get_or_create(
-    name=swag['swag_name'],
-    power=swag['swag_power'],
-    pony=pony 
-)[0]
+    # Create pony swag which belongs to a pony
+    PonySwag.objects.get_or_create(
+        name=swag['swag_name'],
+        power=swag['swag_power'],
+        pony=pony 
+    )[0]
 </code></pre>
-
-<p>```</p>
 
 <p>In this scenario, for every entry in csv, the code hits the database to get a pony (based on the name) to assign it to a corresponding swag. Now if we cache the created ponies, we would not have
 to query the database anymore.</p>
 
-<p>``` python
-import csv
+<pre><code class="python">import csv
 from collections import defaultdict
-from models import Pony, PonySwag</p>
+from models import Pony, PonySwag
 
-<p>class PoniesCache(defaultdict):</p>
+class PoniesCache(defaultdict):
+    # If dict lookup fails this will be called
+    def __missing__(self, key):
+        # Insert a pony in cache dict and return it
+        pony = Pony.objects.get_or_create(name=key)[0]
+        self[key] = pony
+        return pony
 
-<pre><code># If dict lookup fails this will be called
-def __missing__(self, key):
-    # Insert a pony in cache dict and return it
-    pony = Pony.objects.get_or_create(name=key)[0]
-    self[key] = pony
-    return pony
+ponies_cache = PoniesCache()
+# Getting some data from csv file
+swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')
+
+for swag in swags:
+    pony = ponies_cache[swag['pony_name']]
+
+    # Create pony swag which belongs to a pony
+    PonySwag.objects.get_or_create(
+        name=swag['swag_name'],
+        power=swag['swag_power'],
+        pony=pony 
+    )[0]
 </code></pre>
-
-<p>ponies_cache = PoniesCache()</p>
-
-<h1>Getting some data from csv file</h1>
-
-<p>swags = csv.DictReader('pony_swag.csv', 'rU'), dialect='excel')</p>
-
-<p>for swag in swags:</p>
-
-<pre><code>pony = ponies_cache[swag['pony_name']]
-
-# Create pony swag which belongs to a pony
-PonySwag.objects.get_or_create(
-    name=swag['swag_name'],
-    power=swag['swag_power'],
-    pony=pony 
-)[0]
-</code></pre>
-
-<p>```</p>
 
 <p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
 <code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
@@ -326,57 +285,49 @@ In our case, we override <code>__missing__</code> to create a pony and store it 
 <!-- more -->
 
 
-<p>``` python
-from django.db import models
-from datetime import datetime, timedelta</p>
+<pre><code class="python">from django.db import models
+from datetime import datetime, timedelta
 
-<p>class AuthToken(models.Model):</p>
+class AuthToken(models.Model):
+    token = models.TextField()
+    last_updated = models.DateTimeField(auto_now_add=True)
 
-<pre><code>token = models.TextField()
-last_updated = models.DateTimeField(auto_now_add=True)
+    def token_update(self):
+        # Check if the token's lifespan is more than n days (n=1 in this case)
+        # You can adjust n value to whatever you want
 
-def token_update(self):
-    # Check if the token's lifespan is more than n days (n=1 in this case)
-    # You can adjust n value to whatever you want
-
-    if datetime.now() - self.last_updated &gt; timedelta(days=1):
-        return True
-    return False
+        if datetime.now() - self.last_updated &gt; timedelta(days=1):
+            return True
+        return False
 </code></pre>
-
-<p>```</p>
 
 <p>Now let's write a function that regenerates AuthToken and saves it back to database.</p>
 
-<p>```python
-from models import AuthToken</p>
+<pre><code class="python">from models import AuthToken
 
-<p>CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'</p>
+CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'
 
-<p>def regenerate_authtoken():</p>
+def regenerate_authtoken():
+    auth_token = AuthToken.objects.all()[0]
+    if auth_token.token_update():
+        data = urllib.urlencode(
+            {
+                'Email': 'youremail@gmail.com',
+                'Passwd': 'yourpassword',
+                'service': 'service_name',
+                'accountType': 'GOOGLE'
+            }
+        )
+        req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
+        resp = urllib2.urlopen(req)
+        resp_body = resp.read()
 
-<pre><code>auth_token = AuthToken.objects.all()[0]
-if auth_token.token_update():
-    data = urllib.urlencode(
-        {
-            'Email': 'youremail@gmail.com',
-            'Passwd': 'yourpassword',
-            'service': 'service_name',
-            'accountType': 'GOOGLE'
-        }
-    )
-    req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
-    resp = urllib2.urlopen(req)
-    resp_body = resp.read()
-
-    resp_dict = dict(
-        x.split('=') for x in resp_body.split('\n') if x
-    )
-    auth_token.token = resp_dict['Auth']
-    auth_token.save()
+        resp_dict = dict(
+            x.split('=') for x in resp_body.split('\n') if x
+        )
+        auth_token.token = resp_dict['Auth']
+        auth_token.save()
 </code></pre>
-
-<p>```</p>
 
 <p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
 ]]></content>

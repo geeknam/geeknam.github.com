@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: appengine | geeknam's blog]]></title>
+  <title><![CDATA[Category: appengine | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/appengine/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2012-09-12T01:05:11+10:00</updated>
+  <updated>2014-06-25T23:37:24+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
-    <name><![CDATA[Ngo Minh Nam]]></name>
+    <name><![CDATA[Nam Ngo]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -32,16 +32,12 @@ which phone number to send the SMS to. Took a look at guru.appspot.com source co
 <code>xmpp_handlers.CommandHandler</code>. Used this method <code>text_message(self, message)</code> and message.sender supposed to return the
 sender of a message but instead it returned an IM formatted string. Here is how you can retrieve the email.</p>
 
-<p>``` python
-class XMPPHandler(xmpp_handlers.CommandHandler):</p>
-
-<pre><code>def text_message(self, message):
-    idx  = message.sender.index('/')
-    user = message.sender[0:idx]
-    logging.debug(user)
+<pre><code class="python">class XMPPHandler(xmpp_handlers.CommandHandler):
+    def text_message(self, message):
+        idx  = message.sender.index('/')
+        user = message.sender[0:idx]
+        logging.debug(user)
 </code></pre>
-
-<p>```</p>
 ]]></content>
   </entry>
   
@@ -55,105 +51,93 @@ class XMPPHandler(xmpp_handlers.CommandHandler):</p>
 <!-- more -->
 
 
-<p>``` python
-import urllib
+<pre><code class="python">import urllib
 import json
 from google.appengine.api import mail
 from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import util
-from google.appengine.ext.webapp.util import run_wsgi_app</p>
+from google.appengine.ext.webapp.util import run_wsgi_app
 
-<p>class Feedback(db.Model):</p>
 
-<pre><code>user     = db.StringProperty()
-heritage = db.StringProperty()
-comment  = db.StringProperty(multiline=True)
-star     = db.IntegerProperty()
-date     = db.DateTimeProperty(auto_now_add=True)
+class Feedback(db.Model):
+    user     = db.StringProperty()
+    heritage = db.StringProperty()
+    comment  = db.StringProperty(multiline=True)
+    star     = db.IntegerProperty()
+    date     = db.DateTimeProperty(auto_now_add=True)
 
-#Convert feedback object into a dictionary
-def toDict(self):
-    return {'user': self.user,'heritage': self.heritage,
-                'comment': self.comment,'star':  self.star,'date': self.date}
+    #Convert feedback object into a dictionary
+    def toDict(self):
+        return {'user': self.user,'heritage': self.heritage,
+                    'comment': self.comment,'star':  self.star,'date': self.date}
+
+
+class FeedbackGetter(webapp.RequestHandler):
+    def get(self,heritage):
+    #Retrieve feedbacks of a particular heritage requested
+        heritage = urllib.unquote(heritage)
+        feedbacks = db.GqlQuery("SELECT * FROM Feedback WHERE heritage = :1", heritage)
+
+        feedDict = {}
+        for feedback in feedbacks:
+            feedDict[str(feedback.key())] = feedback.toDict()
+
+        self.response.out.write(json.encode(feedDict));
+
+class FeedbackStore(webapp.RequestHandler):
+    def post(self):
+    #Storing feedback in datastore
+        feedback = Feedback()
+        feedback.user     = self.request.get('email')
+        feedback.heritage = self.request.get('heritage')
+        feedback.comment  = self.request.get('comment')
+        feedback.star     = int(self.request.get('star'))
+        feedback.put()
+
+        #Sending confirmation email to the user
+        myemail         = mail.EmailMessage()
+        myemail.sender  = "World Heritage Site &lt;noreply@androidnam.appspotmail.com&gt;"
+        myemail.to      = feedback.user
+        myemail.subject = "Feedback on " + feedback.heritage
+        myemail.body    = '''
+        Thank you for submitting your feedback, \n
+        Heritage: %s \n
+        Comment: %s \n
+        Rating: %s 
+        ''' % (feedback.heritage, feedback.comment, feedback.star)
+        myemail.send()
+
+        self.redirect('/get/'+feedback.heritage)
+
+class FeedbackForm(webapp.RequestHandler):
+    def get(self):
+        self.response.out.write("""
+        &lt;html&gt;
+          &lt;body&gt;
+            &lt;form action="/store" method="post"&gt;
+              Heritage:&lt;div&gt;&lt;input name="heritage" /&gt;&lt;/div&gt;
+              Email:&lt;div&gt;&lt;input name="email" /&gt;&lt;/div&gt;
+              Comment:&lt;div&gt;&lt;input name="comment" /&gt;&lt;/div&gt;
+              Star:&lt;div&gt;&lt;input name="star" /&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;input type="submit" value="Submit"&gt;&lt;/div&gt;
+            &lt;/form&gt;
+          &lt;/body&gt;
+        &lt;/html&gt;
+        """)
+
+
+application = webapp.WSGIApplication([(r'/get/(.*)', FeedbackGetter),
+                      ('/store', FeedbackStore),
+                      ('/feedback', FeedbackForm)],
+                                      debug=True)
+
+
+def main():
+    run_wsgi_app(application)
+
+if __name__ == "__main__":
+    main()
 </code></pre>
-
-<p>class FeedbackGetter(webapp.RequestHandler):</p>
-
-<pre><code>def get(self,heritage):
-#Retrieve feedbacks of a particular heritage requested
-    heritage = urllib.unquote(heritage)
-    feedbacks = db.GqlQuery("SELECT * FROM Feedback WHERE heritage = :1", heritage)
-
-    feedDict = {}
-    for feedback in feedbacks:
-        feedDict[str(feedback.key())] = feedback.toDict()
-
-    self.response.out.write(json.encode(feedDict));
-</code></pre>
-
-<p>class FeedbackStore(webapp.RequestHandler):</p>
-
-<pre><code>def post(self):
-#Storing feedback in datastore
-    feedback = Feedback()
-    feedback.user     = self.request.get('email')
-    feedback.heritage = self.request.get('heritage')
-    feedback.comment  = self.request.get('comment')
-    feedback.star     = int(self.request.get('star'))
-    feedback.put()
-
-    #Sending confirmation email to the user
-    myemail         = mail.EmailMessage()
-    myemail.sender  = "World Heritage Site &lt;noreply@androidnam.appspotmail.com&gt;"
-    myemail.to      = feedback.user
-    myemail.subject = "Feedback on " + feedback.heritage
-    myemail.body    = '''
-    Thank you for submitting your feedback, \n
-    Heritage: %s \n
-    Comment: %s \n
-    Rating: %s 
-    ''' % (feedback.heritage, feedback.comment, feedback.star)
-    myemail.send()
-
-    self.redirect('/get/'+feedback.heritage)
-</code></pre>
-
-<p>class FeedbackForm(webapp.RequestHandler):</p>
-
-<pre><code>def get(self):
-    self.response.out.write("""
-    &lt;html&gt;
-      &lt;body&gt;
-        &lt;form action="/store" method="post"&gt;
-          Heritage:&lt;div&gt;&lt;input name="heritage" /&gt;&lt;/div&gt;
-          Email:&lt;div&gt;&lt;input name="email" /&gt;&lt;/div&gt;
-          Comment:&lt;div&gt;&lt;input name="comment" /&gt;&lt;/div&gt;
-          Star:&lt;div&gt;&lt;input name="star" /&gt;&lt;/div&gt;
-          &lt;div&gt;&lt;input type="submit" value="Submit"&gt;&lt;/div&gt;
-        &lt;/form&gt;
-      &lt;/body&gt;
-    &lt;/html&gt;
-    """)
-</code></pre>
-
-<p>application = webapp.WSGIApplication([(r'/get/(.*)', FeedbackGetter),</p>
-
-<pre><code>                  ('/store', FeedbackStore),
-                  ('/feedback', FeedbackForm)],
-                                  debug=True)
-</code></pre>
-
-<p>def main():</p>
-
-<pre><code>run_wsgi_app(application)
-</code></pre>
-
-<p>if <strong>name</strong> == "<strong>main</strong>":</p>
-
-<pre><code>main()
-</code></pre>
-
-<p>```</p>
 ]]></content>
   </entry>
   
