@@ -6,4 +6,4 @@ comments: false
 sharing: false
 footer: false
 ---
-Sample!
+I'm a software developer with interests in web and mobile apps. Passionate about building scalable web solutions and crafting quality code.
