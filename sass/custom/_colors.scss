@@ -2,8 +2,8 @@
 // To give it a try, uncomment some of the lines below rebuild your blog, and see how it works.
 // If you need a handy color picker try http://hslpicker.com
 
-$header-bg: #fff;
-//$subtitle-color: lighten($header-bg, 58);
+$header-bg: #3f51b5;
+$subtitle-color: #fff;
 $nav-bg: #fff;
 $nav-bg-front: none;
 $nav-bg-back: #fff;
@@ -46,4 +46,4 @@ $page-bg: #fff;
 $link-color: #268bd2;
 $nav-color: $link-color;
 $link-color-visited:darken($nav-color, 25);
-$title-color: $link-color;
+$title-color: #fff;
