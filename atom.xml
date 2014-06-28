@@ -4,7 +4,7 @@
   <title><![CDATA[Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2014-06-26T00:59:36+10:00</updated>
+  <updated>2014-06-29T01:14:27+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Nam Ngo]]></name>
@@ -12,6 +12,197 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Django Inspired Design Patterns - Part 1: Middleware]]></title>
+    <link href="http://blog.namis.me/2014/06/26/django-inspired-design-patterns-part-1/"/>
+    <updated>2014-06-26T21:48:00+10:00</updated>
+    <id>http://blog.namis.me/2014/06/26/django-inspired-design-patterns-part-1</id>
+    <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Middleware is a framework of hooks into Django’s request/response processing. It’s a light, low-level “plugin” system for globally altering Django’s input or output.'>
+Refactoring code is (most of the time) a fun activity until you hit an obstacle or run out of ways to
+simplify the code. You&#8217;ll find yourself looking for new design patterns from books or even digging inside the source code
+of your favorite open source projects to find some inspiration. Having worked with Django for 3 years, I find its <a href="https://docs.djangoproject.com/en/dev/misc/design-philosophies/">design
+philosophy</a> and decisions ideal. As a result, I&#8217;ve decided to
+dedicate a blog series to cover this topic: Django inspired design patterns and how you can use them to refactor your code.</p>
+
+<!-- more -->
+
+
+<p><strong>Middleware</strong><br/>
+Middleware is a simple yet very robust component of Django. Middleware is a framework of hooks into Django’s request/response processing. It’s a light, low-level “plugin” system for globally altering Django’s input or output. This should look familiar
+to you</p>
+
+<figure class='code'><figcaption><span>settings.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">MIDDLEWARE_CLASSES</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class='line'>    <span class="s">&#39;django.middleware.gzip.GZipMiddleware&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The core concept of middleware is to dynamically load middleware classes using the provided dotted paths.</p>
+
+<p><strong>Where shall we consider this design pattern?</strong><br/>
+Let&#8217;s consider a simple example of an email validator that all of us can relate to.
+The email validator:<br/>
+1. Has input and output<br/>
+2. Consists of validation conditions (validate input) - validators<br/>
+3. Can optionally mutate the output - mutators</p>
+
+<p>A simple version can be written like this</p>
+
+<figure class='code'><figcaption><span>email_validator.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'> <span class="k">def</span> <span class="nf">validate_email</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+</span><span class='line'>     <span class="k">if</span> <span class="s">&#39;@&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">email</span><span class="p">:</span>
+</span><span class='line'>         <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s">&#39;Invalid email. @ not found&#39;</span><span class="p">)</span>
+</span><span class='line'>     <span class="k">if</span> <span class="s">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">email</span><span class="p">:</span>
+</span><span class='line'>         <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s">&#39;Invalid email. Incorrect domain?&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="c"># lowercase domain</span>
+</span><span class='line'>     <span class="n">name</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)</span>
+</span><span class='line'>     <span class="n">email</span> <span class="o">=</span> <span class="s">&#39;@&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">name</span><span class="p">,</span> <span class="n">domain</span><span class="o">.</span><span class="n">lower</span><span class="p">()])</span>
+</span><span class='line'>     <span class="k">return</span> <span class="n">email</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>How do we go about refactoring?</strong><br/>
+Let&#8217;s break down the logic into small units of validators and mutators.
+We need to define a <code>PIPELINE</code> constant which holds the dotted paths that can be loaded.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">PIPELINE</span> <span class="o">=</span> <span class="p">(</span>
+</span><span class='line'>    <span class="s">&#39;validation.contains_dot&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">&#39;validation.contains_at&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">&#39;mutators.lowercase_domain&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s">&#39;mutators.lowercase_name&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># in validation.py</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">contains_dot</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">email</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;No . found&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">contains_at</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;@&#39;</span> <span class="ow">in</span> <span class="n">email</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;No @ found&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># in mutators.py</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">lowercase_domain</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">value</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&#39;@&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">value</span><span class="p">,</span> <span class="n">domain</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">lowercase_name</span><span class="p">(</span><span class="n">email</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">value</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;@&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">return</span> <span class="s">&#39;@&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">value</span><span class="p">,</span> <span class="n">domain</span><span class="p">])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&#8217;s create a EmailValidator class that dynamically loads validators and mutators.
+<code>load_pipelines</code> imports functions from dotted paths and add them into a list.
+This example uses <code>__import__</code> but it&#8217;s recommended that you use <code>importlib</code></p>
+
+<figure class='code'><figcaption><span>email_validator_class.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">EmailValidator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_pipelines</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">load_pipelines</span><span class="p">()</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipelines</span><span class="p">:</span>
+</span><span class='line'>            <span class="c"># execute each function</span>
+</span><span class='line'>            <span class="n">res</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">res</span><span class="p">:</span>
+</span><span class='line'>                <span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">res</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">load_pipelines</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">PIPELINE</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">mod_name</span><span class="p">,</span> <span class="n">func_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">mod</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">mod_name</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">_pipelines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">email</span> <span class="o">=</span> <span class="n">EmailValidator</span><span class="p">(</span><span class="s">&#39;sOmeEmail@CamelCase.com&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">email</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>Why do it this way? What are the benefits?</strong><br/>
+-  <strong>Pluggable</strong>: this design makes it easy for other developers to extend the logic of your code, it&#8217;s maintainable. Let&#8217;s say if there&#8217;s a new requirement to validate that the email is actually valid and will not bounce, we can easily add a new function to the validators file and add it into the <code>PIPELINE</code>.<br/>
+-  <strong>Loose coupling</strong>: each pipe (function) doesn&#8217;t know/care what the other does.<br/>
+-  <strong>Easy to unit test</strong>: by breaking down the logic into small units, it&#8217;s now easier to write tests. We can now write tests for each of those functions in the pipeline.</p>
+
+<p></span></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Fibonacci With Caching]]></title>
@@ -1419,195 +1610,6 @@ stuff like:</p>
 <li>transmission (torrent server)</li>
 <li>vncserver</li>
 </ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Simple Web Service With Google App Engine]]></title>
-    <link href="http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine/"/>
-    <updated>2010-06-13T13:44:00+10:00</updated>
-    <id>http://blog.namis.me/2010/06/13/simple-web-service-with-google-app-engine</id>
-    <content type="html"><![CDATA[<p>It&#8217;s been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I&#8217;m pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
-
-<!-- more -->
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">urllib</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">json</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.api</span> <span class="kn">import</span> <span class="n">mail</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext</span> <span class="kn">import</span> <span class="n">webapp</span><span class="p">,</span> <span class="n">db</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext.webapp</span> <span class="kn">import</span> <span class="n">util</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">google.appengine.ext.webapp.util</span> <span class="kn">import</span> <span class="n">run_wsgi_app</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Feedback</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">user</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">heritage</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">comment</span>  <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">StringProperty</span><span class="p">(</span><span class="n">multiline</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">star</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">IntegerProperty</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">date</span>     <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">DateTimeProperty</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c">#Convert feedback object into a dictionary</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">toDict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>        <span class="k">return</span> <span class="p">{</span><span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span><span class="s">&#39;heritage&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">heritage</span><span class="p">,</span>
-</span><span class='line'>                    <span class="s">&#39;comment&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span><span class="s">&#39;star&#39;</span><span class="p">:</span>  <span class="bp">self</span><span class="o">.</span><span class="n">star</span><span class="p">,</span><span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">date</span><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackGetter</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">heritage</span><span class="p">):</span>
-</span><span class='line'>    <span class="c">#Retrieve feedbacks of a particular heritage requested</span>
-</span><span class='line'>        <span class="n">heritage</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">heritage</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">feedbacks</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">GqlQuery</span><span class="p">(</span><span class="s">&quot;SELECT * FROM Feedback WHERE heritage = :1&quot;</span><span class="p">,</span> <span class="n">heritage</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">feedDict</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span class='line'>        <span class="k">for</span> <span class="n">feedback</span> <span class="ow">in</span> <span class="n">feedbacks</span><span class="p">:</span>
-</span><span class='line'>            <span class="n">feedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">feedback</span><span class="o">.</span><span class="n">key</span><span class="p">())]</span> <span class="o">=</span> <span class="n">feedback</span><span class="o">.</span><span class="n">toDict</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">feedDict</span><span class="p">));</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackStore</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>    <span class="c">#Storing feedback in datastore</span>
-</span><span class='line'>        <span class="n">feedback</span> <span class="o">=</span> <span class="n">Feedback</span><span class="p">()</span>
-</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">user</span>     <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;email&#39;</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;heritage&#39;</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">comment</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;comment&#39;</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">star</span>     <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;star&#39;</span><span class="p">))</span>
-</span><span class='line'>        <span class="n">feedback</span><span class="o">.</span><span class="n">put</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="c">#Sending confirmation email to the user</span>
-</span><span class='line'>        <span class="n">myemail</span>         <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">EmailMessage</span><span class="p">()</span>
-</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">sender</span>  <span class="o">=</span> <span class="s">&quot;World Heritage Site &lt;noreply@androidnam.appspotmail.com&gt;&quot;</span>
-</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">to</span>      <span class="o">=</span> <span class="n">feedback</span><span class="o">.</span><span class="n">user</span>
-</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="s">&quot;Feedback on &quot;</span> <span class="o">+</span> <span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span>
-</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">body</span>    <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
-</span><span class='line'><span class="s">        Thank you for submitting your feedback, </span><span class="se">\n</span><span class="s"></span>
-</span><span class='line'><span class="s">        Heritage: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s"></span>
-</span><span class='line'><span class="s">        Comment: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s"></span>
-</span><span class='line'><span class="s">        Rating: </span><span class="si">%s</span><span class="s"> </span>
-</span><span class='line'><span class="s">        &#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span><span class="p">,</span> <span class="n">feedback</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">feedback</span><span class="o">.</span><span class="n">star</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">myemail</span><span class="o">.</span><span class="n">send</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="s">&#39;/get/&#39;</span><span class="o">+</span><span class="n">feedback</span><span class="o">.</span><span class="n">heritage</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">FeedbackForm</span><span class="p">(</span><span class="n">webapp</span><span class="o">.</span><span class="n">RequestHandler</span><span class="p">):</span>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
-</span><span class='line'><span class="s">        &lt;html&gt;</span>
-</span><span class='line'><span class="s">          &lt;body&gt;</span>
-</span><span class='line'><span class="s">            &lt;form action=&quot;/store&quot; method=&quot;post&quot;&gt;</span>
-</span><span class='line'><span class="s">              Heritage:&lt;div&gt;&lt;input name=&quot;heritage&quot; /&gt;&lt;/div&gt;</span>
-</span><span class='line'><span class="s">              Email:&lt;div&gt;&lt;input name=&quot;email&quot; /&gt;&lt;/div&gt;</span>
-</span><span class='line'><span class="s">              Comment:&lt;div&gt;&lt;input name=&quot;comment&quot; /&gt;&lt;/div&gt;</span>
-</span><span class='line'><span class="s">              Star:&lt;div&gt;&lt;input name=&quot;star&quot; /&gt;&lt;/div&gt;</span>
-</span><span class='line'><span class="s">              &lt;div&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot;&gt;&lt;/div&gt;</span>
-</span><span class='line'><span class="s">            &lt;/form&gt;</span>
-</span><span class='line'><span class="s">          &lt;/body&gt;</span>
-</span><span class='line'><span class="s">        &lt;/html&gt;</span>
-</span><span class='line'><span class="s">        &quot;&quot;&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="n">application</span> <span class="o">=</span> <span class="n">webapp</span><span class="o">.</span><span class="n">WSGIApplication</span><span class="p">([(</span><span class="s">r&#39;/get/(.*)&#39;</span><span class="p">,</span> <span class="n">FeedbackGetter</span><span class="p">),</span>
-</span><span class='line'>                      <span class="p">(</span><span class="s">&#39;/store&#39;</span><span class="p">,</span> <span class="n">FeedbackStore</span><span class="p">),</span>
-</span><span class='line'>                      <span class="p">(</span><span class="s">&#39;/feedback&#39;</span><span class="p">,</span> <span class="n">FeedbackForm</span><span class="p">)],</span>
-</span><span class='line'>                                      <span class="n">debug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-</span><span class='line'>    <span class="n">run_wsgi_app</span><span class="p">(</span><span class="n">application</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span class='line'>    <span class="n">main</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>

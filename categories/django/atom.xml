@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Django | Nam Ngo's blog]]></title>
   <link href="http://blog.namis.me/categories/django/atom.xml" rel="self"/>
   <link href="http://blog.namis.me/"/>
-  <updated>2014-06-26T00:59:36+10:00</updated>
+  <updated>2014-06-29T01:14:38+10:00</updated>
   <id>http://blog.namis.me/</id>
   <author>
     <name><![CDATA[Nam Ngo]]></name>
@@ -12,6 +12,130 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Django Inspired Design Patterns - Part 1: Middleware]]></title>
+    <link href="http://blog.namis.me/2014/06/26/django-inspired-design-patterns-part-1/"/>
+    <updated>2014-06-26T21:48:00+10:00</updated>
+    <id>http://blog.namis.me/2014/06/26/django-inspired-design-patterns-part-1</id>
+    <content type="html"><![CDATA[<p>{% pullquote %}
+Refactoring code is (most of the time) a fun activity until you hit an obstacle or run out of ways to
+simplify the code. You'll find yourself looking for new design patterns from books or even digging inside the source code
+of your favorite open source projects to find some inspiration. Having worked with Django for 3 years, I find its <a href="https://docs.djangoproject.com/en/dev/misc/design-philosophies/">design
+philosophy</a> and decisions ideal. As a result, I've decided to
+dedicate a blog series to cover this topic: Django inspired design patterns and how you can use them to refactor your code.</p>
+
+<!-- more -->
+
+
+<p><strong>Middleware</strong><br/>
+Middleware is a simple yet very robust component of Django. {"Middleware is a framework of hooks into Django’s request/response processing. It’s a light, low-level “plugin” system for globally altering Django’s input or output."} This should look familiar
+to you</p>
+
+<pre><code class="python settings.py">MIDDLEWARE_CLASSES = (
+    'django.middleware.gzip.GZipMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+)
+</code></pre>
+
+<p>The core concept of middleware is to dynamically load middleware classes using the provided dotted paths.</p>
+
+<p><strong>Where shall we consider this design pattern?</strong><br/>
+Let's consider a simple example of an email validator that all of us can relate to.
+The email validator:<br/>
+1. Has input and output<br/>
+2. Consists of validation conditions (validate input) - validators<br/>
+3. Can optionally mutate the output - mutators</p>
+
+<p>A simple version can be written like this
+``` python email_validator.py
+ def validate_email(email):
+     if '@' not in email:
+         raise ValidationError('Invalid email. @ not found')
+     if '.' not in email:
+         raise ValidationError('Invalid email. Incorrect domain?')</p>
+
+<pre><code> # lowercase domain
+ name, domain = email.split('@')
+ email = '@'.join([name, domain.lower()])
+ return email
+</code></pre>
+
+<pre><code>
+__How do we go about refactoring?__  
+Let's break down the logic into small units of validators and mutators.
+We need to define a `PIPELINE` constant which holds the dotted paths that can be loaded.
+</code></pre>
+
+<p>PIPELINE = (
+    'validation.contains_dot',
+    'validation.contains_at',
+    'mutators.lowercase_domain',
+    'mutators.lowercase_name',
+)</p>
+
+<h1>in validation.py</h1>
+
+<p>def contains_dot(email):
+    if not '.' in email:
+        raise Exception('No . found')
+    return</p>
+
+<p>def contains_at(email):
+    if not '@' in email:
+        raise Exception('No @ found')
+    return</p>
+
+<h1>in mutators.py</h1>
+
+<p>def lowercase_domain(email):
+    value, domain = email.split('@')
+    domain = domain.lower()
+    return '@'.join([value, domain])</p>
+
+<p>def lowercase_name(email):
+    value, domain = email.split('@')
+    value = value.lower()
+    return '@'.join([value, domain])
+```</p>
+
+<p>Let's create a EmailValidator class that dynamically loads validators and mutators.
+<code>load_pipelines</code> imports functions from dotted paths and add them into a list.
+This example uses <code>__import__</code> but it's recommended that you use <code>importlib</code></p>
+
+<pre><code class="python email_validator_class.py">class EmailValidator(object):
+
+    def __init__(self, email):
+        self._pipelines = []
+        self.load_pipelines()
+        self.email = email
+
+        for func in self._pipelines:
+            # execute each function
+            res = func(self.email)
+            if res:
+                self.email = res
+
+    def load_pipelines(self):
+        for line in PIPELINE:
+            mod_name, func_name = line.split('.')
+            mod = __import__(mod_name)
+            func = getattr(mod, func_name)
+            self._pipelines.append(func)
+
+email = EmailValidator('sOmeEmail@CamelCase.com').email
+</code></pre>
+
+<p><strong>Why do it this way? What are the benefits?</strong><br/>
+-  <strong>Pluggable</strong>: this design makes it easy for other developers to extend the logic of your code, it's maintainable. Let's say if there's a new requirement to validate that the email is actually valid and will not bounce, we can easily add a new function to the validators file and add it into the <code>PIPELINE</code>.<br/>
+-  <strong>Loose coupling</strong>: each pipe (function) doesn't know/care what the other does.<br/>
+-  <strong>Easy to unit test</strong>: by breaking down the logic into small units, it's now easier to write tests. We can now write tests for each of those functions in the pipeline.</p>
+
+<p>{% endpullquote %}</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Writing Unit Tests for Django Middleware]]></title>
@@ -139,9 +263,9 @@ As you could see, I didn't have to use <code>django.test.client.Client</code> to
     <link href="http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie/"/>
     <updated>2012-03-27T01:14:00+11:00</updated>
     <id>http://blog.namis.me/2012/03/27/django-custom-email-form-field-for-email-pie</id>
-    <content type="html"><![CDATA[<p><span class='pullquote-right' data-pullquote='Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We&#8217;ll let you know if that email address is legit or not.'>
+    <content type="html"><![CDATA[<p>{% pullquote %}
 As you know Django's <code>forms.EmailField()</code> is capable of validating email addresses but what if you wanted to validate the existence of a particular email address? I've found a pretty neat solution for that, it's called <a href="http://emailpie.com/">Email Pie</a>.
-Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We'll let you know if that email address is legit or not.. You could either use the service hosted on emailpie.com or run your own instance (it's open source). In this post, I'm going to show you how to write a custom form field that makes use of Email Pie.</p>
+{"Email Pie is a wonderful little JSON API that gives you a simple way to validate email addresses. We'll let you know if that email address is legit or not."}. You could either use the service hosted on emailpie.com or run your own instance (it's open source). In this post, I'm going to show you how to write a custom form field that makes use of Email Pie.</p>
 
 <!-- more -->
 
@@ -202,7 +326,7 @@ class EmailPieFieldTest(TestCase):
         self.assertEquals(email_field.clean('nam@namis.me'), 'nam@namis.me')
 </code></pre>
 
-<p></span></p>
+<p>{% endpullquote %}</p>
 ]]></content>
   </entry>
   
@@ -272,64 +396,6 @@ for swag in swags:
 <p>As you might have read, <code>defaultdict</code> is a subclass of <code>dict</code> and it overrides a method called <code>__missing__</code>.<br/>
 <code>__missing__</code> is called by the <code>__getitem__()</code> method of the dict class when the requested key is not found (when <code>swag['pony_name']</code> value is not found in ponies_cache).
 In our case, we override <code>__missing__</code> to create a pony and store it in cache (if it doesn't exist yet) and return it. This results in a pony being inserted in the dictionary with a key <code>swag['pony_name']</code>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Regenerating Google's ClientLogin AuthToken in Django]]></title>
-    <link href="http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django/"/>
-    <updated>2012-02-14T12:47:00+11:00</updated>
-    <id>http://blog.namis.me/2012/02/14/regenerating-googles-clientlogin-authtoken-in-django</id>
-    <content type="html"><![CDATA[<p>If your application makes use of Google API, you will most likely have to deal with AuthToken expiry (unless you use oAuth). As far as I know, AuthToken generated with ClientLogin authorization expires after 2 weeks. Therefore, it's good to have a solution to auto regenerate it. First of all, create a model that stores the token and the last updated day.</p>
-
-<!-- more -->
-
-
-<pre><code class="python">from django.db import models
-from datetime import datetime, timedelta
-
-class AuthToken(models.Model):
-    token = models.TextField()
-    last_updated = models.DateTimeField(auto_now_add=True)
-
-    def token_update(self):
-        # Check if the token's lifespan is more than n days (n=1 in this case)
-        # You can adjust n value to whatever you want
-
-        if datetime.now() - self.last_updated &gt; timedelta(days=1):
-            return True
-        return False
-</code></pre>
-
-<p>Now let's write a function that regenerates AuthToken and saves it back to database.</p>
-
-<pre><code class="python">from models import AuthToken
-
-CLIENT_LOGIN_URL = 'https://www.google.com/accounts/ClientLogin'
-
-def regenerate_authtoken():
-    auth_token = AuthToken.objects.all()[0]
-    if auth_token.token_update():
-        data = urllib.urlencode(
-            {
-                'Email': 'youremail@gmail.com',
-                'Passwd': 'yourpassword',
-                'service': 'service_name',
-                'accountType': 'GOOGLE'
-            }
-        )
-        req = urllib2.Request(CLIENT_LOGIN_URL, data=data)
-        resp = urllib2.urlopen(req)
-        resp_body = resp.read()
-
-        resp_dict = dict(
-            x.split('=') for x in resp_body.split('\n') if x
-        )
-        auth_token.token = resp_dict['Auth']
-        auth_token.save()
-</code></pre>
-
-<p>With this approach you would have to call <code>regenerate_authtoken()</code> every time you make API requests. Let me know if you have a better solution.</p>
 ]]></content>
   </entry>
   

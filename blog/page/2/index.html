@@ -9,7 +9,13 @@
   <meta name="author" content="Nam Ngo">
 
   
-  <meta name="description" content="When writing tests in Django apps, I have an urge to reuse code in setUp() across all tests (most of my apps use the same setUp). So I come up with a &hellip;">
+  <meta name="description" content="The normal usecase of Django forms is to have predefined fields in forms like this: 1
+2
+3
+4
+5
+6
+from django import forms class EmailPreferenceForm( &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +77,64 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/02/13/django-dynamic-unsubscribe-forms/">Django Dynamic Unsubscribe Forms</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-13T15:40:00+11:00" pubdate data-updated="true">Feb 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The normal usecase of Django forms is to have predefined fields in forms like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">EmailPreferenceForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">daily_digest</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">weekly_news</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">monthly_summary</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What if we wanted to add more fields to the form like <code>weekly_digest</code> and so on? Well, of course you would have to add a new field to the form and maybe handle extra work in your views. Let&#8217;s make this more dynamic.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/2012/02/13/django-dynamic-unsubscribe-forms/">Read more &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -560,48 +624,9 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/06/13/simple-web-service-with-google-app-engine/">Simple Web Service With Google App Engine</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-06-13T13:44:00+10:00" pubdate data-updated="true">Jun 13<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>It&#8217;s been a while since I last posted an entry. Nothing much has changed in my life. The two-week holiday has just passed by in a blink of an eye. Has been busy with Android assignment, Cypher IGs camp and Pycon Singapore 2010. Now after Pycon, I&#8217;m pretty much convinced about the power of simplicity of Python. Knowing Google App Engine (GAE) quite a while ago, I decided to use GAE to help me out in my assignment (yes, yes, Google to the rescue) by writing a simple GAE web service which stores/retrieves feedbacks in form of JSON. The following tutorial is simple enough for beginners to follow.</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/2010/06/13/simple-web-service-with-google-app-engine/">Read more &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -624,6 +649,10 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/26/django-inspired-design-patterns-part-1/">Django Inspired Design Patterns - Part 1: Middleware</a>
+      </li>
+    
+      <li class="post">
         <a href="/2012/05/29/fibonacci-with-caching/">Fibonacci With Caching</a>
       </li>
     
@@ -637,10 +666,6 @@ about it is the energy consumption ranging from 5-10 Watts.</p>
     
       <li class="post">
         <a href="/2012/03/27/django-custom-email-form-field-for-email-pie/">Django Custom Email Form Field for Email Pie</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2012/02/16/python-class-factory/">Python Class Factory</a>
       </li>
     
   </ul>
